@@ -23,7 +23,7 @@ export default function Home() {
 
     return (
         <>
-            <Header total={300} />
+            <Header total={0} />
             {isLoading
                 ? <div className="loading-spinner">
                     <Loading />
