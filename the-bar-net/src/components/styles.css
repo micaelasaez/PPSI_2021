@@ -9,3 +9,82 @@
 .header-style {
     background-color: black !important;
 }
+.footer-style {
+    background-color: white !important;
+    border: 2px solid red;
+}
+.img-carrousel-ofertas {
+    background-image: url("../utils/images/banner_ofertas.png");
+    background-size: cover;
+    width: 600px;
+    height: 300px;
+}
+.img-carrousel-combos {
+    background-image: url("../utils/images/banner_combos.png");
+    background-position: center;
+    background-size: cover;
+    width: 600px;
+    height: 300px;
+}
+.carrousel-item {
+    overflow: hidden;
+}
+.carrousel-item:hover {
+    filter: brightness(80%) contrast(95%);
+}
+.categories-col {
+    height: 250px;
+    margin: 22px 10px;
+    overflow: hidden;
+}
+.categories-col:hover {
+    height: 200px;
+    filter: brightness(80%) contrast(95%);
+}
+.categories-vinos {
+    background-image: url("../utils/images/categorias_vinos.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-cervezas {
+    background-image: url("../utils/images/categorias_cervezas.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-espumantes {
+    background-image: url("../utils/images/categorias_espumantes.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-vodka {
+    background-image: url("../utils/images/categorias_vodka.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-whiskys {
+    background-image: url("../utils/images/categorias_vinos.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-sin-alcohol {
+    background-image: url("../utils/images/categorias_espumantes.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 250px;
+}
+.categories-name {    
+    position: absolute;
+    right: 15%;
+    bottom: 20px;
+    left: 15%;
+    z-index: 10;
+    padding-bottom: 7px;
+    color: #fff;
+    text-align: center;
+    background-color: blueviolet;
+}

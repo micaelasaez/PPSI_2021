@@ -4,8 +4,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import bannerOfertas from "../utils/images/banner_ofertas.png";
-import bannerCombos from "../utils/images/banner_combos.png";
 
 export default function CarouselHome({onSelectOfertas, onSelectCombos}) {
     return (
@@ -13,22 +11,16 @@ export default function CarouselHome({onSelectOfertas, onSelectCombos}) {
             <Row className="justify-content-md-center">
                 <Col md="auto">
                     <Carousel>
-                        <Carousel.Item onClick={onSelectOfertas}>
-                            <img
-                                src={bannerOfertas}
-                                alt="Ofertas"
-                            />
+                        <Carousel.Item onClick={onSelectOfertas} className={"carrousel-item"}>
+                            <div className={"img-carrousel-ofertas"} />
                             <Carousel.Caption>
-                                <p>Ver ofertas disponibles del sitio.</p>
+                                <h3>Ver ofertas disponibles del sitio.</h3>
                             </Carousel.Caption>
                         </Carousel.Item>
-                        <Carousel.Item onClick={onSelectCombos}>
-                            <img
-                                src={bannerCombos}
-                                alt="Combos"
-                            />
+                        <Carousel.Item onClick={onSelectCombos} className={"carrousel-item"}>
+                            <div className={"img-carrousel-combos"} />
                             <Carousel.Caption>
-                                <p>Ver los combos disponibles del sitio.</p>
+                                <h3>Ver los combos disponibles del sitio.</h3>
                             </Carousel.Caption>
                         </Carousel.Item>
                     </Carousel>

@@ -3,6 +3,8 @@ import '../styles.css';
 import { Loading } from '../commons/Loading';
 import CarouselHome from '../CarouselHome';
 import { Header } from '../Header';
+import { Footer } from '../Footer';
+import Categories from '../Categories';
 
 export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
@@ -29,8 +31,15 @@ export default function Home() {
                     <Loading />
                 </div>
                 : <div>
-                    <div style={{ marginTop: "20px" }}>
+                    <div style={{ marginTop: "20px"}}>
                         <CarouselHome onSelectOfertas={onSelectOfertas} onSelectCombos={onSelectCombos} />
+                    </div>
+                    <div style={{ marginTop: "80px", marginBottom: "30px"}}>
+                        <h1>Categorías</h1>
+                    </div>
+                    <Categories />
+                    <div style={{ marginTop: "20px"}}>
+                        <Footer />
                     </div>
                 </div>
             }
