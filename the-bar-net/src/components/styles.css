@@ -1,3 +1,4 @@
+/* #7607d8 */
 .loading-spinner {
     width: 100%;
     height: 100%;
@@ -11,7 +12,27 @@
 }
 .footer-style {
     background-color: white !important;
-    border: 2px solid red;
+    /* border: 2px solid red; */
+    margin-top: 200px;
+}
+.login-form {
+    width: 40%;
+    padding: 20px;
+    margin: auto;
+    margin-top: 100px;
+    /* background-color: #d4bcec; */
+}
+.personalized-button {
+    background-color: #7607d8 !important;
+    border-color: #7607d8 !important;
+}
+.personalized-button:hover {
+    background-color: #984dda !important;
+    border-color: #984dda !important;
+}
+.personalized-button:disabled {
+    background-color: #984dda !important;
+    border-color: #984dda !important;
 }
 .img-carrousel-ofertas {
     background-image: url("../utils/images/banner_ofertas.png");
