@@ -10,6 +10,7 @@ import NewProduct from './components/NewProduct';
 import { TheNetBarContextConsumer } from './components/context/TheNetBarContext';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
+import SignUp from './components/pages/SignUp';
 
 function App() {
 
@@ -27,6 +28,9 @@ function App() {
         </Route>
         <Route path="/login">
           <Login />
+        </Route>
+        <Route path="/sign-up">
+          <SignUp />
         </Route>
         <Route path="/new-product">
           <NewProduct />
