@@ -3,28 +3,24 @@ import '../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Login from './Login';
-import UsuariosList from './UsuariosList';
 
-export default function AdminView() {
-    const active = "products";
+export default function UsuariosList() {
+    const active = "encargados";
 
     return (
         <div>
             <br />
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }}>
-                <Tab eventKey={active} title="Bebidas">
+                <Tab eventKey={active} title="Encargados">
                     <Login />
                 </Tab>
-                <Tab eventKey="users" title="Usuarios">
-                    <UsuariosList />
-                </Tab>
-                <Tab eventKey="bancos-tarjetas" title="Bancos y Tarjetas">
+                <Tab eventKey="empleados" title="Empleados">
                     <Login />
                 </Tab>
-                <Tab eventKey="sucursal" title="Sucursal">
+                <Tab eventKey="repartidores" title="Repartidores">
                     <Login />
                 </Tab>
-                <Tab eventKey="precios-envio" title="Precios de Envios">
+                <Tab eventKey="clientes" title="Clientes">
                     <Login />
                 </Tab>
             </Tabs>
