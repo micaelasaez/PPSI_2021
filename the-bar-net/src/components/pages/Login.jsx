@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import '../styles.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 import Nav from 'react-bootstrap/Nav';
-import { TheNetBarContextConsumer } from '../context/TheNetBarContext';
+import { TheNetBar } from '../context/TheNetBarContext';
 import { useHistory } from 'react-router';
+import { TheBarNetServerUrl } from '../context/Url';
 
 const validateEmail = (mail) => {
     if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
@@ -14,18 +16,43 @@ const validateEmail = (mail) => {
 }
 
 export default function Login() {
+    const { setIsLogged } = useContext(TheNetBar.Context);
+    const history = useHistory();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loginLoading, setLoginLoading] = useState(false);
     const [mailError, setMailError] = useState(false);
     const [tryAgainText, setTryAgainText] = useState(false);
     const [submitDisabled, setSubmitDisabled] = useState(true);
-    const history = useHistory();
 
-    const handleSubmit = (setIsLogged) => {
+    const handleSubmit = async () => {
         if (!submitDisabled) {
-            console.log("logged in", email, password, setIsLogged)
-            setIsLogged(true);
-            history.push("/home");
+            setLoginLoading(true);
+            console.log("logged in", email, password)
+            const response = await fetch(TheBarNetServerUrl.login, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+            console.log(response);
+            // const data = await response.json();
+            // console.log(data)
+            if (response.code === 200) {
+                /**
+                // context function
+                setIsLogged(true);
+                history.push("/home");
+                */                
+            } else {
+                // setTryAgainText(response.message);
+            }
+            setLoginLoading(false);
         }
     }
 
@@ -47,7 +74,7 @@ export default function Login() {
         } else {
             setSubmitDisabled(true);
         }
-    }, [email, password, setSubmitDisabled])
+    }, [email, password, setSubmitDisabled]);
 
     return (
         <div style={{ height: "100%" }}>
@@ -71,7 +98,7 @@ export default function Login() {
 
                 <Form.Group controlId="formBasicPassword">
                     <Form.Label className="login-form-tittles">Contraseña</Form.Label>
-                    <Form.Control type="password" name="password" placeholder="Password" onChange={handleChange} />
+                    <Form.Control type="password" name="password" placeholder="Password" onChange={handleChange} isValid={password.length > 4}/>
                 </Form.Group>
 
                 <Form.Text className="text-muted-personalized">
@@ -80,14 +107,12 @@ export default function Login() {
                 </Form.Text>
                 <br />
                 <br />
-                <TheNetBarContextConsumer>
-                    {
-                        ({ setIsLogged }) => (
-                            <Button onClick={() => handleSubmit(setIsLogged)} disabled={submitDisabled} className="personalized-button">
-                                Ingresar
-                            </Button>
-                        )}
-                </TheNetBarContextConsumer>
+                {loginLoading 
+                    ? <Spinner animation="border" variant="primary" />
+                    : <Button onClick={handleSubmit} disabled={submitDisabled} className="personalized-button">
+                        Ingresar
+                    </Button>
+                }
                 <br />
                 <br />
                 <Nav.Link href="/sign-up" className={"sign-up"}>
@@ -106,7 +131,6 @@ export default function Login() {
             <br />
             <br />
             <br />
-            {/* <p>Falta crear cuenta + validar email si es que vamos a usar mail</p> */}
         </div>
     )
 }
