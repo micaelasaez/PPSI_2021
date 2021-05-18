@@ -7,7 +7,7 @@ const TheNetBarContext = React.createContext({
     setIsLogged: () => {},
 });
 
-export class TheNetBarProvider extends Component {
+class TheNetBarProvider extends Component {
     state = {
         user: {},
         isLogged: false,
@@ -47,4 +47,8 @@ export class TheNetBarProvider extends Component {
 }
 
 
-export const TheNetBarContextConsumer = TheNetBarContext.Consumer;
+export const TheNetBar = {
+    Consumer: TheNetBarContext.Consumer,
+    Provider: TheNetBarProvider,
+    Context: TheNetBarContext
+}

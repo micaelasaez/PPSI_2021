@@ -57,8 +57,8 @@
     border-color: #984dda !important;
 }
 .personalized-button:disabled {
-    background-color: #984dda !important;
-    border-color: #984dda !important;
+    background-color: #6c757d !important;
+    border-color: #080808 !important;
 }
 .img-carrousel-ofertas {
     background-image: url("../utils/images/banner_ofertas.png");

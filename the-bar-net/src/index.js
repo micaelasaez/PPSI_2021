@@ -5,15 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { TheNetBarProvider } from './components/context/TheNetBarContext';
+import { TheNetBar } from './components/context/TheNetBarContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <TheNetBarProvider>
+    <TheNetBar.Provider>
       <Router>
         <App />
       </Router>
-    </TheNetBarProvider>
+    </TheNetBar.Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
