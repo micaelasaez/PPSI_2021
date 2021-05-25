@@ -6,7 +6,6 @@ import Combos from './components/pages/Combos';
 import Ofertas from './components/pages/Ofertas';
 import NotFound from './components/pages/NotFound';
 import Login from './components/pages/Login';
-import NewProduct from './components/NewProduct';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
 import SignUp from './components/pages/SignUp';
@@ -33,9 +32,8 @@ function App() {
         <Route path="/sign-up">
           <SignUp />
         </Route>
-        <Route path="/new-product">
-          <NewProduct />
-        </Route>
+        {/* <Route path="/new-product">
+        </Route> */}
         <Route path="/home">
           <Home />
         </Route>

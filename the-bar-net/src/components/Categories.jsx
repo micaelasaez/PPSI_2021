@@ -9,14 +9,14 @@ export default function Categories() {
     const history = useHistory();
 
     const arrayCategoriesFstRow = [
-        { name: 'cervezas', title: 'Cervezas' },
-        { name: 'vinos', title: 'Vinos' },
-        { name: 'espumantes', title: 'Espumantes' }
+        { name: 'cervezas', title: 'CERVEZAS' },
+        { name: 'vinos', title: 'VINOS' },
+        { name: 'espumantes', title: 'ESPUMANTES' }
     ];
     const arrayCategoriesScndRow = [
-        { name: 'vodka', title: 'Vodkas' },
-        { name: 'whiskys', title: 'Whiskys' },
-        { name: 'sin-alcohol', title: 'Sin Alcohol' }
+        { name: 'vodka', title: 'VODKAS' },
+        { name: 'whiskys', title: 'WHISKYS' },
+        { name: 'sin-alcohol', title: 'SIN ALCOHOL' }
     ];
 
     const handleClick = category => {

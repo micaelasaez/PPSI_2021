@@ -25,9 +25,11 @@ export default function Home({ carritoTotal, isLogged, ...props }) {
                         <CarouselHome />
                     </div>
                     <div style={{ marginTop: "80px", marginBottom: "30px"}}>
-                        <h1>Categorías</h1>
+                        <h1 className="tittle-style">
+                            CATEGORÍAS
+                        </h1>
+                        <Categories />
                     </div>
-                    <Categories />
                     <div style={{ marginTop: "20px"}}>
                         <Footer />
                     </div>

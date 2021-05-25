@@ -60,6 +60,12 @@
     background-color: #6c757d !important;
     border-color: #080808 !important;
 }
+.tittle-style {
+    color: black;
+    text-shadow: 2px 2px #740ecd;
+    font-size: 50px;
+    margin-bottom: 30px;
+}
 .img-carrousel-ofertas {
     background-image: url("../utils/images/banner_ofertas.png");
     background-size: cover;
@@ -134,4 +140,5 @@
     color: #fff;
     text-align: center;
     background-color: blueviolet;
+    text-shadow: 2px 2px #1d1026;
 }

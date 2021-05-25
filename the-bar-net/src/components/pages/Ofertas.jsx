@@ -3,6 +3,9 @@ import '../styles.css';
 
 export default function ofertas() {
     return (
-        <h1>ofertas</h1>
+        <div style={{ height: '100%' }}>
+            <h1 className="tittle-style" style={{ marginTop: "50px" }}>OFERTAS</h1>
+            
+        </div>
     )
 }
