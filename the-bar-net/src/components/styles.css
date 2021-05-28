@@ -119,13 +119,13 @@
     height: 250px;
 }
 .categories-whiskys {
-    background-image: url("../utils/images/categorias_vinos.jpg");
+    background-image: url("../utils/images/categorias_whiskys.jpg");
     background-position: center;
     background-size: cover;
     height: 250px;
 }
 .categories-sin-alcohol {
-    background-image: url("../utils/images/categorias_espumantes.jpg");
+    background-image: url("../utils/images/categorias_sin_alcohol.jpg");
     background-position: center;
     background-size: cover;
     height: 250px;

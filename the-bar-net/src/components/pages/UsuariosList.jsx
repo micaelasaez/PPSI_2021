@@ -3,6 +3,7 @@ import '../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Login from './Login';
+import ShowUsuarios from '../ShowUsuarios';
 
 export default function UsuariosList() {
     const active = "encargados";
@@ -12,16 +13,16 @@ export default function UsuariosList() {
             <br />
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }}>
                 <Tab eventKey={active} title="Encargados">
-                    <Login />
+                    <ShowUsuarios type="encargados" />
                 </Tab>
                 <Tab eventKey="empleados" title="Empleados">
-                    <Login />
+                    <ShowUsuarios type="empleados" />
                 </Tab>
                 <Tab eventKey="repartidores" title="Repartidores">
-                    <Login />
+                    <ShowUsuarios type="repartidores" />
                 </Tab>
                 <Tab eventKey="clientes" title="Clientes">
-                    <Login />
+                    <ShowUsuarios type="clientes" />
                 </Tab>
             </Tabs>
         </div>
