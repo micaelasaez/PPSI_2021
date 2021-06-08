@@ -8,9 +8,10 @@ import NotFound from './components/pages/NotFound';
 import Login from './components/pages/Login';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
-import SignUp from './components/pages/SignUp';
 import { TheNetBar } from './components/context/TheNetBarContext';
 import AdminView from './components/pages/AdminView';
+import SignUp from './components/Forms/SignUp';
+import Carrito from './components/pages/Carrito';
 
 function App() {
 
@@ -39,6 +40,9 @@ function App() {
         </Route>
         <Route path="/home-admin">
           <AdminView />
+        </Route>
+        <Route path="/carrito">
+          <Carrito />
         </Route>
         <Route path="/combos">
           <Combos />

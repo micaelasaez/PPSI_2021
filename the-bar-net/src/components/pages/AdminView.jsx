@@ -6,6 +6,7 @@ import Login from './Login';
 import Button from 'react-bootstrap/Button';
 import UsuariosList from './UsuariosList';
 import AddProduct from '../Forms/AddProduct';
+import SignUp from '../Forms/SignUp';
 
 export default function AdminView() {
     const active = "products";
@@ -29,7 +30,7 @@ export default function AdminView() {
                     </Button>
                     {showUsuarios
                         ? <UsuariosList />
-                        : <></>
+                        : <SignUp adminMode={true}/>
                     }
                 </Tab>
                 <Tab eventKey="bancos-tarjetas" title="BANCOS Y TARJETAS">

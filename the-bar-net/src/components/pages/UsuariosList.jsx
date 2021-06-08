@@ -2,7 +2,6 @@ import React from 'react';
 import '../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Login from './Login';
 import ShowUsuarios from '../ShowUsuarios';
 
 export default function UsuariosList() {

@@ -28,31 +28,30 @@ export default function Login() {
     const handleSubmit = async () => {
         if (!submitDisabled) {
             setLoginLoading(true);
-            console.log("logged in", email, password)
-            const response = await fetch(TheBarNetServerUrl.login, {
+            // console.log("logged in", email, password)
+            fetch(TheBarNetServerUrl.login, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/json'
                 },
+                mode: 'cors', // no-cors
                 body: JSON.stringify({
                     email: email,
                     password: password
                 })
-            });
-            console.log(response);
-            // const data = await response.json();
-            // console.log(data)
-            if (response.code === 200) {
-                /**
-                // context function
-                setIsLogged(true);
-                history.push("/home");
-                */                
-            } else {
-                // setTryAgainText(response.message);
-            }
-            setLoginLoading(false);
+            })
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    const token = response.rta;
+                    if (token === "Incorrect login") {
+                        setTryAgainText("Email o contraseña incorrectos!");
+                    } else {
+                        setIsLogged(true, token);
+                        history.push("/home");
+                    }
+                    setLoginLoading(false);
+                });
         }
     }
 
@@ -98,7 +97,7 @@ export default function Login() {
 
                 <Form.Group controlId="formBasicPassword">
                     <Form.Label className="login-form-tittles">Contraseña</Form.Label>
-                    <Form.Control type="password" name="password" placeholder="Password" onChange={handleChange} isValid={password.length > 4}/>
+                    <Form.Control type="password" name="password" placeholder="Password" onChange={handleChange} isValid={password.length > 4} />
                 </Form.Group>
 
                 <Form.Text className="text-muted-personalized">
@@ -107,7 +106,7 @@ export default function Login() {
                 </Form.Text>
                 <br />
                 <br />
-                {loginLoading 
+                {loginLoading
                     ? <Spinner animation="border" variant="primary" />
                     : <Button onClick={handleSubmit} disabled={submitDisabled} className="personalized-button">
                         Ingresar

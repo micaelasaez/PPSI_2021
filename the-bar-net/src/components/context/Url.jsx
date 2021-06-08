@@ -1,5 +1,4 @@
-// const baseURL = 'http://localhost:3000';
-const baseURL = 'https://thebarnetapi.loca.lt';
+const baseURL = 'http://localhost:4200';
 
 export const TheBarNetServerUrl = { 
     login: baseURL + '/login',

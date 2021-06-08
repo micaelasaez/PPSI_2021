@@ -14,9 +14,10 @@ const validateEmail = (mail) => {
     return false;
 }
 
-export default function SignUp() {
+export default function SignUp({ adminMode, user }) {
     const { setIsLogged } = useContext(TheNetBar.Context);
-    
+
+    const [type, setType] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [dni, setDni] = useState("");
@@ -30,53 +31,59 @@ export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
-    
+
     const [mailError, setMailError] = useState(false);
     const [passwordError, setPasswordError] = useState("");
     const [passwordDiferent, setPasswordDifferent] = useState("");
     const [tryAgainText, setTryAgainText] = useState("");
-    
+
     const [submitDisabled, setSubmitDisabled] = useState(true);
     const history = useHistory();
 
     const handleSubmit = async () => {
         if (!submitDisabled) {
-            const user = {
+            const userNew = {
                 nombre: name,
                 apellido: surname,
                 dni: dni,
                 cuit: cuit,
                 email: email,
                 password: password,
-                telefono: caracteristica + telephone,
+                telefono: caracteristica + ' ' + telephone,
                 direccion: direccion,
                 localidad: localidad,
                 provincia: provincia,
                 codigoPostal: cp,
                 confiable: "yes",
-                tipo: "cliente"
+                // tipo: "cliente"
+                tipo: adminMode ? type : user ? user.tipo : "cliente"
             };
-            console.log("logged in", user);
+            console.log("sign up", userNew, user);
             // fetch 
-            const response = await fetch(TheBarNetServerUrl.users, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: JSON.stringify(user)
-            })
-            console.log(response.rta);
-            // const data = await response.json();
-            // console.log(data)
-
-
-            // setIsLogged
-            // setIsLogged(true);
-            // history.push("/home");
-
-            // else
-            // set try again text
+            if (user) {
+                // PUT to update user
+            } else {
+                fetch(TheBarNetServerUrl.users, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors', // no-cors
+                    body: JSON.stringify(userNew)
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response.rta === "added") {
+                            // setIsLogged o redirect to login ?
+                                // setIsLogged(true, token);
+                                // history.push("/home");
+                        } else if (response.rta === "added") {
+                            setTryAgainText("Ese usuario ya se encuentra registrado en el sistema!");
+                        } else {
+                            setTryAgainText("Algo salió mal, por favor intente de nuevo!");
+                        }
+                    });
+            }
         }
     }
 
@@ -107,64 +114,103 @@ export default function SignUp() {
             setCp(value.target.value);
         } else if (value.target.name === "dni") {
             setDni(value.target.value);
+        } else if (adminMode && value.target.name === "type") {
+            setType(value.target.value);
         }
-    }, []);
+    }, [adminMode]);
 
     useEffect(() => {
-        const validName = name.length > 1;
-        const validSurname = surname.length > 1;
-        const validDNI = dni.length > 1 && dni.length < 9;
-        const validCuit = cuit.length === 11;
-        const validCaracteristica = caracteristica.length > 0 && caracteristica.length < 5;
-        const validTelephone = telephone.length > 5 && telephone.length < 13;
-        const validDireccion = direccion.length > 0;
-        const validLocalidad = localidad.length > 0;
-        const validProvincia = provincia.length > 0;
-        const validCp = cp.length > 0 && cp.length < 5;
-        const validPass = password.length > 4;
+        if (user) {
+            setName(user.nombre);
+            setSurname(user.apellido);
+            setDni(user.dni);
+            setCuit(user.cuit);
+            // setCaracteristica(user.caracteristica);
+            setTelephone(user.telefono);
+            setDireccion(user.direccion);
+            setLocalidad(user.localidad);
+            setProvincia(user.provincia);
+            setCp(user.codigoPostal);
+            setEmail(user.email);
+            setPassword(user.password);
+            setPasswordRepeat(user.password);
+
+            setMailError(false);
+            setPasswordError(false);
+            setPasswordDifferent(false);
+            setTryAgainText("");
+
+            setSubmitDisabled(false);
+            console.log(user)
+        }
+    }, [user]);
+
+    const validName = name.length > 1;
+    const validSurname = surname.length > 1;
+    const validDNI = dni.length === 8;
+    const validCuit = cuit.length === 11;
+    const validCaracteristica = user ? true : (caracteristica.length > 0 && caracteristica.length < 5);
+    const validTelephone = telephone.length > 5 && telephone.length < 13;
+    const validDireccion = direccion.length > 0;
+    const validLocalidad = localidad.length > 0;
+    const validProvincia = provincia.length > 0;
+    const validCp = cp.length > 0 && cp.length < 5;
+    const validPass = password.length > 4;
+    
+    useEffect(() => {
         setPasswordError(!validPass);
         const validPassRepeat = password === passwordRepeat;
         setPasswordDifferent(validPassRepeat);
         const validMail = validateEmail(email);
         setMailError(validMail);
 
-        if (validMail && validPass && validName && validSurname && validDNI && validPassRepeat && validCuit && validCaracteristica 
+        if (validMail && validPass && validName && validSurname && validDNI && validPassRepeat && validCuit && validCaracteristica
             && validTelephone && validDireccion && validLocalidad && validCp && validProvincia) {
             setSubmitDisabled(false);
         } else {
             setSubmitDisabled(true);
         }
-    }, [caracteristica.length, cp.length, cuit.length, direccion.length, dni.length, email, localidad.length, name.length, password, passwordRepeat, provincia.length, setSubmitDisabled, surname.length, telephone.length]);
+    }, [caracteristica, cp, cuit, direccion, dni, email, localidad, name, password, passwordRepeat, provincia, setSubmitDisabled, surname, telephone, user, validCaracteristica, validCp, validCuit, validDNI, validDireccion, validLocalidad, validName, validPass, validProvincia, validSurname, validTelephone]);
 
 
     return (
         <div style={{ height: "100%" }}>
-            <h1 className="login-form-tittle">Registro de Cuenta</h1>
-            <Form className="login-form">
+            {!user && <h1 className="login-form-tittle">Registro de Cuenta</h1>}
+            <Form className={user ? "login-form-pop-up": "login-form"}>
                 <br />
                 <br />
                 <Form.Group controlId="formBasicName" className="inline-name-surname">
                     <Form.Label className="login-form-tittles">Nombre</Form.Label>
-                    <Form.Control type="text" name="name" placeholder="" onChange={handleChange} isValid={name.length > 1}/>
+                    <Form.Control type="text" name="name" onChange={handleChange} isValid={validName} 
+                        defaultValue={user ? name : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicSurname">
                     <Form.Label className="login-form-tittles">Apellido</Form.Label>
-                    <Form.Control type="text" name="surname" placeholder="" onChange={handleChange} isValid={surname.length > 1}/>
+                    <Form.Control type="text" name="surname" onChange={handleChange} isValid={validSurname}
+                        defaultValue={user ? surname : ""} />
                 </Form.Group>
 
                 <Form.Group controlId="formBasicDni">
                     <Form.Label className="login-form-tittles">DNI (sin puntos ni comas)</Form.Label>
-                    <Form.Control type="number" name="dni" placeholder="12345678" onChange={handleChange} isValid={dni.length > 1 && dni.length < 9}/>
+                    <Form.Control type="number" name="dni" onChange={handleChange} isValid={validDNI} 
+                        defaultValue={user ? dni : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicCuit">
                     <Form.Label className="login-form-tittles">Cuit (sin guiones)</Form.Label>
-                    <Form.Control type="number" name="cuit" placeholder="12 34567890 1" onChange={handleChange} isValid={cuit.length === 11}/>
+                    <Form.Control type="number" name="cuit" onChange={handleChange} isValid={validCuit} 
+                        defaultValue={user ? cuit : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicTelephone">
                     <Form.Label className="login-form-tittles">Telefono con característica</Form.Label>
                     <div style={{ display: 'flex' }}>
-                        <Form.Control type="number" name="telephone_caracteristica" placeholder="011" onChange={handleChange} style={{ width: '100px' }} isValid={caracteristica.length > 0 && caracteristica.length < 5}/>
-                        <Form.Control type="number" name="telephone" placeholder="12345678" onChange={handleChange} isValid={telephone.length > 5 && telephone.length < 13}/>
+                        {user 
+                            ?  <Form.Control type="number" name="telephone" onChange={handleChange} isValid={validTelephone} 
+                            defaultValue={user ? telephone : ""} />
+                            : <>
+                                <Form.Control type="number" name="telephone_caracteristica" onChange={handleChange} style={{ width: '100px' }} isValid={validCaracteristica} />
+                                <Form.Control type="number" name="telephone" onChange={handleChange} isValid={validTelephone} />
+                            </>
+                        }
                     </div>
                 </Form.Group>
 
@@ -173,9 +219,9 @@ export default function SignUp() {
                     <Form.Control
                         type="email"
                         name="email"
-                        placeholder="name@example.com"
                         isValid={mailError}
                         onChange={handleChange}
+                        defaultValue={user ? email : ""}
                     />
                     {(!mailError && email.length > 1) && <Form.Text className="text-muted-personalized">
                         Ingrese un mail válido.
@@ -185,34 +231,54 @@ export default function SignUp() {
 
                 <Form.Group controlId="formBasicAddress" className="inline-name-surname">
                     <Form.Label className="login-form-tittles">Dirección</Form.Label>
-                    <Form.Control type="text" name="direccion" placeholder="Mitre 650" onChange={handleChange} isValid={direccion.length > 0}/>
+                    <Form.Control type="text" name="direccion" onChange={handleChange} isValid={validDireccion}
+                        defaultValue={user ? direccion : ""}/>
                 </Form.Group>
                 <Form.Group controlId="formBasicLocalidad">
                     <Form.Label className="login-form-tittles">Localidad</Form.Label>
-                    <Form.Control type="text" name="localidad" placeholder="Avellaneda" onChange={handleChange} isValid={localidad.length > 0}/>
+                    <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
+                        defaultValue={user ? localidad : ""}/>
                 </Form.Group>
                 <Form.Group controlId="formBasicProvincia">
                     <Form.Label className="login-form-tittles">Provincia</Form.Label>
-                    <Form.Control type="text" name="provincia" placeholder="Buenos Aires" onChange={handleChange} isValid={provincia.length > 0}/>
+                    <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia}
+                        defaultValue={user ? provincia : ""}/>
                 </Form.Group>
                 <br />
                 <Form.Group controlId="formBasicCp">
                     <div style={{ display: 'flex' }}>
                         <Form.Label className="login-form-tittles" style={{ width: '60%' }}>Código Postal</Form.Label>
-                        <Form.Control type="number" name="cp" placeholder="1825" onChange={handleChange} style={{ width: '40%' }} isValid={cp.length > 0 && cp.length < 5}/>
+                        <Form.Control type="number" name="cp" onChange={handleChange} style={{ width: '40%' }} 
+                            isValid={validCp} 
+                            defaultValue={user ? cp : ""}
+                        />
                     </div>
                 </Form.Group>
                 <br />
+                {adminMode &&
+                    <Form.Group controlId="formBasicType">
+                        <Form.Control as="select" onChange={handleChange} id="type">
+                            <option key='encargado'>Encargado</option>
+                            <option key='empleado'>Empleado</option>
+                            <option key='repartidor'>Repartidor</option>
+                            <option key='usuario' defaultValue>Usuario</option>
+                        </Form.Control>
+                    </Form.Group>
+                }
                 <Form.Group controlId="formBasicPassword">
                     <Form.Label className="login-form-tittles">Contraseña</Form.Label>
-                    <Form.Control type="password" name="password" placeholder="Mayor a 4 caracteres" onChange={handleChange} isValid={!passwordError && password.length > 1}/>
+                    <Form.Control type="password" name="password" onChange={handleChange} isValid={!passwordError && password.length > 1}
+                        defaultValue={user ? password : ""}
+                    />
                     {(passwordError && password.length > 1) && <Form.Text className="text-muted-personalized">
                         Ingrese una contraseña con más de 4 caracteres.
                     </Form.Text>}
                 </Form.Group>
                 <Form.Group controlId="formBasicPasswordRepeat">
                     <Form.Label className="login-form-tittles">Repetir contraseña</Form.Label>
-                    <Form.Control type="password" name="password-repeat" placeholder="Mayor a 4 caracteres" onChange={handleChange} isValid={passwordDiferent && passwordRepeat.length > 1} />
+                    <Form.Control type="password" name="password-repeat" onChange={handleChange} isValid={passwordDiferent && passwordRepeat.length > 1}
+                        defaultValue={user ? passwordRepeat : ""}
+                    />
                     {(!passwordDiferent && passwordRepeat.length > 1) && <Form.Text className="text-muted-personalized">
                         Las contraseñas no coinciden.
                     </Form.Text>}
@@ -221,29 +287,23 @@ export default function SignUp() {
                     </Form.Text>}
                 </Form.Group>
 
-                <Form.Text className="text-muted-personalized">
-                    {/* Datos incorrectos, por favor verifique! */}
-                    {tryAgainText}
-                </Form.Text>
+                <Form.Text className="text-muted-personalized">{tryAgainText}</Form.Text>
+
                 <br />
                 {submitDisabled && <Form.Text className="text-muted-personalized">
-                    Complete todos los campos, por favor!                    
+                    Complete todos los campos, por favor!
                 </Form.Text>}
                 <br />
+
                 <Button onClick={handleSubmit} disabled={submitDisabled} className="personalized-button">
-                    Ingresar
+                    Guardar
                 </Button>
                 <br />
                 <br />
-                <Nav.Link href="/sign-up" className={"sign-up"}>
-                    No tenés cuenta? Registrate acá
+                <Nav.Link href="/login" className={"login"}>
+                    Ya tengo cuenta
                 </Nav.Link>
             </Form>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
             <br />
             <br />
             <br />

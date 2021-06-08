@@ -7,6 +7,9 @@
 .header-letters {
     color: white;
 }
+.header-letters:hover {
+    color: #a041f8;
+}
 .header-style {
     background-color: black !important;
 }
@@ -22,6 +25,13 @@
     margin-top: 50px;
     /* background-color: #d4bcec; */
     background-color: #461e6b;
+}
+.login-form-pop-up {
+    width: 95%;
+    padding: 0px;
+    margin: auto;
+    /* background-color: #d4bcec; */
+    /* background-color: #461e6b; */
 }
 .login-form-tittle {
     color: white;
@@ -141,4 +151,12 @@
     text-align: center;
     background-color: blueviolet;
     text-shadow: 2px 2px #1d1026;
+}
+.table-row:hover {
+    background-color: #8f61b5;
+}
+.table-row-title {
+    background-color: #9262b9;
+    color: black;
+    font-weight: bold;
 }

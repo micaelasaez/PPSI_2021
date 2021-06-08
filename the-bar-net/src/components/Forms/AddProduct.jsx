@@ -3,6 +3,7 @@ import '../styles.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { TheBarNetServerUrl } from '../context/Url';
 
 const categories = [
     { name: 'cervezas', title: 'Cervezas' },
@@ -43,7 +44,24 @@ export default function AddProduct() {
             maxStock: maxStock,
             foto: photo
         };
-        console.log(product)
+        console.log(product);
+        fetch(TheBarNetServerUrl.products, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors', // no-cors
+            body: JSON.stringify(product)
+        })
+            .then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                console.log(response);
+                // if todo ok 
+                // alert('creado')
+                // else
+                // alert('algo fallo', response.mensaje)
+            });
     }, [name, category, price, quantity, quantityType, stock, minStock, maxStock, photo]);
 
     const handleChange = useCallback((value) => {

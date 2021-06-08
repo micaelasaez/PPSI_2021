@@ -11,7 +11,7 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
     const history = useHistory();
 
     const handleLogOut = useCallback(() => {
-        setIsLogged(false);
+        setIsLogged(false, null);
         history.push("/home");
     }, [history, setIsLogged]);
 
@@ -28,7 +28,7 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
             <Navbar.Collapse className="justify-content-end">
                 <Nav.Link href="/home" className={"header-letters"}>INICIO</Nav.Link>
                 {
-                    isLogged ? (
+                    isLogged !== null ? (
                         type === "admin" ?
                             <>
                             </>
@@ -41,8 +41,9 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
                     )
                 }
                 {
+                    // (type !== "admin" && isLogged !== null) &&
                     type !== "admin" &&
-                    <Nav.Link href="/not-found" className={"header-letters"}>
+                    <div className={"header-letters"} onClick={() => history.push("/carrito")}>
                         <img
                             alt="The Bar Net"
                             src={logoCarrito}
@@ -51,7 +52,7 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
                             className="d-inline-block align-top"
                         />
                         {' '}${carritoTotal || 0}
-                    </Nav.Link>
+                    </div>
                 }
             </Navbar.Collapse>
         </Navbar >

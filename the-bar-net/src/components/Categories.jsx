@@ -16,7 +16,7 @@ export default function Categories() {
     const arrayCategoriesScndRow = [
         { name: 'vodka', title: 'VODKAS' },
         { name: 'whiskys', title: 'WHISKYS' },
-        { name: 'sin-alcohol', title: 'SIN ALCOHOL' }
+        { name: 'sin_alcohol', title: 'SIN ALCOHOL' }
     ];
 
     const handleClick = category => {

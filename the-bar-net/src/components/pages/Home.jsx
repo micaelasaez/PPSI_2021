@@ -6,19 +6,20 @@ import { Footer } from '../Footer';
 import Categories from '../Categories';
 
 export default function Home({ carritoTotal, isLogged, ...props }) {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000)
+        // setTimeout(() => {
+        //     setIsLoading(false);
+        // }, 1000)
     }, [])
 
     return (
-        <>
+        <div style={{ miHeight: "100%" }}>
             {isLoading
                 ? <div className="loading-spinner">
-                    <Loading /> <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                    <Loading />
+                    {/* <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> */}
                 </div>
                 : <div>
                     <div style={{ marginTop: "20px"}}>
@@ -35,6 +36,6 @@ export default function Home({ carritoTotal, isLogged, ...props }) {
                     </div>
                 </div>
             }
-        </>
+        </div>
     )
 }
