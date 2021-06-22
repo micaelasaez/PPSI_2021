@@ -14,7 +14,7 @@ const validateEmail = (mail) => {
     return false;
 }
 
-export default function SignUp({ adminMode, user }) {
+export default function SignUp({ adminMode, user, finalizarCompra, handleFinalizarCompra, showDatosEnvio = true }) {
     const { setIsLogged } = useContext(TheNetBar.Context);
 
     const [type, setType] = useState("");
@@ -62,6 +62,9 @@ export default function SignUp({ adminMode, user }) {
             // fetch 
             if (user) {
                 // PUT to update user
+                if (finalizarCompra) {
+                    handleFinalizarCompra({ ...userNew, tipo: 'cliente' });
+                }
             } else {
                 fetch(TheBarNetServerUrl.users, {
                     method: 'POST',
@@ -74,9 +77,10 @@ export default function SignUp({ adminMode, user }) {
                     .catch(error => console.error('Error:', error))
                     .then(response => {
                         if (response.rta === "added") {
-                            // setIsLogged o redirect to login ?
-                                // setIsLogged(true, token);
-                                // history.push("/home");
+                            history.push({ 
+                                pathname: "/login",
+                                state: email
+                            });
                         } else if (response.rta === "added") {
                             setTryAgainText("Ese usuario ya se encuentra registrado en el sistema!");
                         } else {
@@ -123,14 +127,14 @@ export default function SignUp({ adminMode, user }) {
         if (user) {
             setName(user.nombre);
             setSurname(user.apellido);
-            setDni(user.dni);
-            setCuit(user.cuit);
+            setDni(user.dni.toString());
+            setCuit(user.cuit.toString());
             // setCaracteristica(user.caracteristica);
-            setTelephone(user.telefono);
+            setTelephone(user.telefono.toString());
             setDireccion(user.direccion);
             setLocalidad(user.localidad);
             setProvincia(user.provincia);
-            setCp(user.codigoPostal);
+            setCp(user.codigoPostal.toString());
             setEmail(user.email);
             setPassword(user.password);
             setPasswordRepeat(user.password);
@@ -156,7 +160,7 @@ export default function SignUp({ adminMode, user }) {
     const validProvincia = provincia.length > 0;
     const validCp = cp.length > 0 && cp.length < 5;
     const validPass = password.length > 4;
-    
+
     useEffect(() => {
         setPasswordError(!validPass);
         const validPassRepeat = password === passwordRepeat;
@@ -176,12 +180,12 @@ export default function SignUp({ adminMode, user }) {
     return (
         <div style={{ height: "100%" }}>
             {!user && <h1 className="login-form-tittle">Registro de Cuenta</h1>}
-            <Form className={user ? "login-form-pop-up": "login-form"}>
+            <Form className={user ? "login-form-pop-up" : "login-form"}>
                 <br />
                 <br />
                 <Form.Group controlId="formBasicName" className="inline-name-surname">
                     <Form.Label className="login-form-tittles">Nombre</Form.Label>
-                    <Form.Control type="text" name="name" onChange={handleChange} isValid={validName} 
+                    <Form.Control type="text" name="name" onChange={handleChange} isValid={validName}
                         defaultValue={user ? name : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicSurname">
@@ -192,20 +196,20 @@ export default function SignUp({ adminMode, user }) {
 
                 <Form.Group controlId="formBasicDni">
                     <Form.Label className="login-form-tittles">DNI (sin puntos ni comas)</Form.Label>
-                    <Form.Control type="number" name="dni" onChange={handleChange} isValid={validDNI} 
+                    <Form.Control type="number" name="dni" onChange={handleChange} isValid={validDNI}
                         defaultValue={user ? dni : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicCuit">
                     <Form.Label className="login-form-tittles">Cuit (sin guiones)</Form.Label>
-                    <Form.Control type="number" name="cuit" onChange={handleChange} isValid={validCuit} 
+                    <Form.Control type="number" name="cuit" onChange={handleChange} isValid={validCuit}
                         defaultValue={user ? cuit : ""} />
                 </Form.Group>
                 <Form.Group controlId="formBasicTelephone">
                     <Form.Label className="login-form-tittles">Telefono con característica</Form.Label>
                     <div style={{ display: 'flex' }}>
-                        {user 
-                            ?  <Form.Control type="number" name="telephone" onChange={handleChange} isValid={validTelephone} 
-                            defaultValue={user ? telephone : ""} />
+                        {user
+                            ? <Form.Control type="number" name="telephone" onChange={handleChange} isValid={validTelephone}
+                                defaultValue={user ? telephone : ""} />
                             : <>
                                 <Form.Control type="number" name="telephone_caracteristica" onChange={handleChange} style={{ width: '100px' }} isValid={validCaracteristica} />
                                 <Form.Control type="number" name="telephone" onChange={handleChange} isValid={validTelephone} />
@@ -228,34 +232,35 @@ export default function SignUp({ adminMode, user }) {
                     </Form.Text>}
                 </Form.Group>
 
-
-                <Form.Group controlId="formBasicAddress" className="inline-name-surname">
-                    <Form.Label className="login-form-tittles">Dirección</Form.Label>
-                    <Form.Control type="text" name="direccion" onChange={handleChange} isValid={validDireccion}
-                        defaultValue={user ? direccion : ""}/>
-                </Form.Group>
-                <Form.Group controlId="formBasicLocalidad">
-                    <Form.Label className="login-form-tittles">Localidad</Form.Label>
-                    <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
-                        defaultValue={user ? localidad : ""}/>
-                </Form.Group>
-                <Form.Group controlId="formBasicProvincia">
-                    <Form.Label className="login-form-tittles">Provincia</Form.Label>
-                    <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia}
-                        defaultValue={user ? provincia : ""}/>
-                </Form.Group>
+                {showDatosEnvio && <>
+                    <Form.Group controlId="formBasicAddress" className="inline-name-surname">
+                        <Form.Label className="login-form-tittles">Dirección</Form.Label>
+                        <Form.Control type="text" name="direccion" onChange={handleChange} isValid={validDireccion}
+                            defaultValue={user ? direccion : ""} />
+                    </Form.Group>
+                    <Form.Group controlId="formBasicLocalidad">
+                        <Form.Label className="login-form-tittles">Localidad</Form.Label>
+                        <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
+                            defaultValue={user ? localidad : ""} />
+                    </Form.Group>
+                    <Form.Group controlId="formBasicProvincia">
+                        <Form.Label className="login-form-tittles">Provincia</Form.Label>
+                        <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia}
+                            defaultValue={user ? provincia : ""} />
+                    </Form.Group>
+                    <br />
+                    <Form.Group controlId="formBasicCp">
+                        <div style={{ display: 'flex' }}>
+                            <Form.Label className="login-form-tittles" style={{ width: '60%' }}>Código Postal</Form.Label>
+                            <Form.Control type="number" name="cp" onChange={handleChange} style={{ width: '40%' }}
+                                isValid={validCp}
+                                defaultValue={user ? cp : ""}
+                            />
+                        </div>
+                    </Form.Group>
+                </>}
                 <br />
-                <Form.Group controlId="formBasicCp">
-                    <div style={{ display: 'flex' }}>
-                        <Form.Label className="login-form-tittles" style={{ width: '60%' }}>Código Postal</Form.Label>
-                        <Form.Control type="number" name="cp" onChange={handleChange} style={{ width: '40%' }} 
-                            isValid={validCp} 
-                            defaultValue={user ? cp : ""}
-                        />
-                    </div>
-                </Form.Group>
-                <br />
-                {adminMode &&
+                {(adminMode && !finalizarCompra) &&
                     <Form.Group controlId="formBasicType">
                         <Form.Control as="select" onChange={handleChange} id="type">
                             <option key='encargado'>Encargado</option>
@@ -265,28 +270,29 @@ export default function SignUp({ adminMode, user }) {
                         </Form.Control>
                     </Form.Group>
                 }
-                <Form.Group controlId="formBasicPassword">
-                    <Form.Label className="login-form-tittles">Contraseña</Form.Label>
-                    <Form.Control type="password" name="password" onChange={handleChange} isValid={!passwordError && password.length > 1}
-                        defaultValue={user ? password : ""}
-                    />
-                    {(passwordError && password.length > 1) && <Form.Text className="text-muted-personalized">
-                        Ingrese una contraseña con más de 4 caracteres.
-                    </Form.Text>}
-                </Form.Group>
-                <Form.Group controlId="formBasicPasswordRepeat">
-                    <Form.Label className="login-form-tittles">Repetir contraseña</Form.Label>
-                    <Form.Control type="password" name="password-repeat" onChange={handleChange} isValid={passwordDiferent && passwordRepeat.length > 1}
-                        defaultValue={user ? passwordRepeat : ""}
-                    />
-                    {(!passwordDiferent && passwordRepeat.length > 1) && <Form.Text className="text-muted-personalized">
-                        Las contraseñas no coinciden.
-                    </Form.Text>}
-                    {(passwordError && password.length > 1) && <Form.Text className="text-muted-personalized">
-                        Ingrese una contraseña con más de 4 caracteres.
-                    </Form.Text>}
-                </Form.Group>
-
+                {!finalizarCompra && <>
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Label className="login-form-tittles">Contraseña</Form.Label>
+                        <Form.Control type="password" name="password" onChange={handleChange} isValid={!passwordError && password.length > 1}
+                            defaultValue={user ? password : ""}
+                        />
+                        {(passwordError && password.length > 1) && <Form.Text className="text-muted-personalized">
+                            Ingrese una contraseña con más de 4 caracteres.
+                        </Form.Text>}
+                    </Form.Group>
+                    <Form.Group controlId="formBasicPasswordRepeat">
+                        <Form.Label className="login-form-tittles">Repetir contraseña</Form.Label>
+                        <Form.Control type="password" name="password-repeat" onChange={handleChange} isValid={passwordDiferent && passwordRepeat.length > 1}
+                            defaultValue={user ? passwordRepeat : ""}
+                        />
+                        {(!passwordDiferent && passwordRepeat.length > 1) && <Form.Text className="text-muted-personalized">
+                            Las contraseñas no coinciden.
+                        </Form.Text>}
+                        {(passwordError && password.length > 1) && <Form.Text className="text-muted-personalized">
+                            Ingrese una contraseña con más de 4 caracteres.
+                        </Form.Text>}
+                    </Form.Group>
+                </>}
                 <Form.Text className="text-muted-personalized">{tryAgainText}</Form.Text>
 
                 <br />
@@ -296,13 +302,13 @@ export default function SignUp({ adminMode, user }) {
                 <br />
 
                 <Button onClick={handleSubmit} disabled={submitDisabled} className="personalized-button">
-                    Guardar
+                    {finalizarCompra ? 'Continuar' : 'Guardar'}
                 </Button>
                 <br />
                 <br />
-                <Nav.Link href="/login" className={"login"}>
+                {!finalizarCompra && <Nav.Link href="/login" className={"login"}>
                     Ya tengo cuenta
-                </Nav.Link>
+                </Nav.Link>}
             </Form>
             <br />
             <br />

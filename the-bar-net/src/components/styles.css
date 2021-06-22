@@ -134,7 +134,7 @@
     background-size: cover;
     height: 250px;
 }
-.categories-sin-alcohol {
+.categories-sin_alcohol {
     background-image: url("../utils/images/categorias_sin_alcohol.jpg");
     background-position: center;
     background-size: cover;
@@ -151,6 +151,7 @@
     text-align: center;
     background-color: blueviolet;
     text-shadow: 2px 2px #1d1026;
+    font-size: x-large;
 }
 .table-row:hover {
     background-color: #8f61b5;

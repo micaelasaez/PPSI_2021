@@ -7,6 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import { TheNetBar } from '../context/TheNetBarContext';
 import { useHistory } from 'react-router';
 import { TheBarNetServerUrl } from '../context/Url';
+import { useLocation } from 'react-router-dom';
 
 const validateEmail = (mail) => {
     if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
@@ -18,6 +19,7 @@ const validateEmail = (mail) => {
 export default function Login() {
     const { setIsLogged } = useContext(TheNetBar.Context);
     const history = useHistory();
+    const { state } = useLocation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loginLoading, setLoginLoading] = useState(false);
@@ -28,7 +30,6 @@ export default function Login() {
     const handleSubmit = async () => {
         if (!submitDisabled) {
             setLoginLoading(true);
-            // console.log("logged in", email, password)
             fetch(TheBarNetServerUrl.login, {
                 method: 'POST',
                 headers: {
@@ -36,7 +37,7 @@ export default function Login() {
                 },
                 mode: 'cors', // no-cors
                 body: JSON.stringify({
-                    email: email,
+                    email: (state || email),
                     password: password
                 })
             })
@@ -65,7 +66,7 @@ export default function Login() {
 
     useEffect(() => {
         const validPass = password.length > 4;
-        const validMail = validateEmail(email);
+        const validMail = validateEmail(state || email);
         setMailError(validMail);
 
         if (validMail && validPass) {
@@ -73,7 +74,7 @@ export default function Login() {
         } else {
             setSubmitDisabled(true);
         }
-    }, [email, password, setSubmitDisabled]);
+    }, [email, password, setSubmitDisabled, state]);
 
     return (
         <div style={{ height: "100%" }}>
@@ -81,6 +82,7 @@ export default function Login() {
             <Form className="login-form">
                 <br />
                 <br />
+                {console.log(state)}
                 <Form.Group controlId="formBasicEmail">
                     <Form.Label className="login-form-tittles">Email</Form.Label>
                     <Form.Control
@@ -89,6 +91,7 @@ export default function Login() {
                         placeholder="name@example.com"
                         isValid={mailError}
                         onChange={handleChange}
+                        defaultValue={state || ""}
                     />
                     {(!mailError && email.length > 1) && <Form.Text className="text-muted-personalized">
                         Ingrese un mail válido.

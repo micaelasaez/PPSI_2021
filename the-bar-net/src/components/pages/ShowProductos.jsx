@@ -49,20 +49,24 @@ export default function ShowProductos() {
     stockMin: 30*/
 
     return (
-        <>
+        <div>
             <h1 className="tittle-style" style={styles.title}>{title}</h1>
             <div style={styles.product}>
-                {
-                    products.map(p => (
+                {products.length > 0 
+                    ? products.map(p => (
                         p.stockActual > 0 && <Product addCarrito={addCarritoLocal} p={p}/>
                         //oldPrice
                     ))
+                    : <p>
+                        <h3>Disculpe, no hay productos de esa categoría actualmente!</h3>
+                        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                    </p>
                 }
                 {/* <Product title="Name" price='$800' oldPrice={undefined} addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='1'/>
                 <Product title="Name" price='$800' oldPrice='$900' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='2'/>
                 <Product title="Name" price='$800' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='3'/>
                 <Product title="Name" price='$752' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='4'/> */}
             </div>
-        </>
+        </div>
     )
 }

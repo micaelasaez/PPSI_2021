@@ -33,7 +33,7 @@ export default function Categories() {
                     arrayCategoriesFstRow.map(item => {
                         return <Col className={"categories-col"} onClick={() => handleClick(item)} key={item.name}>
                             <div className={"categories-" + item.name}></div>
-                            <h1 className={"categories-name"}> {item.title}</h1>
+                            <div className={"categories-name"}> {item.title}</div>
                         </Col>
                     })
                 }
@@ -43,7 +43,7 @@ export default function Categories() {
                     arrayCategoriesScndRow.map(item => {
                         return <Col className={"categories-col"} onClick={() => handleClick(item)} key={item.name}>
                             <div className={"categories-" + item.name}></div>
-                            <h1 className={"categories-name"}> {item.title}</h1>
+                            <div className={"categories-name"}> {item.title}</div>
                         </Col>
                     })
                 }

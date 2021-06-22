@@ -21,13 +21,12 @@ export default function Product({ addCarrito, p }) {
         <Card style={{ width: '20rem', height: '35rem', margin: "20px" }}>
             <Card.Img variant="top" src={p.fotos} style={{ width: '15rem', height: '15rem', margin: "auto" }}/>
             <Card.Body>
-                <Card.Title>{p.nombre}</Card.Title>
+                <Card.Title>{p.nombre} - {p.cantidad}</Card.Title>
                 <Card.Text>
                     {p.oldPrice && <span style={{ textDecoration: 'line-through', marginRight: '30px' }}>${' ' + p.oldPrice}</span>}
                     ${' ' + p.precio}
                 </Card.Text>
                 <Form.Group controlId="formBasicCAnt">
-                    <Form.Label className="login-form-tittles">Cantidad</Form.Label>
                     <Form.Control type="number" name="cantidad"
                         onChange={(value) => setCantidad(Number.parseInt(value.target.value))} 
                         isInvalid={cantidad < 1 || cantidad > p.stockActual} 

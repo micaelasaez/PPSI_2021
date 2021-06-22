@@ -5,9 +5,12 @@ const TheNetBarContext = React.createContext({
     isLogged: null,
     carritoTotal: 0,
     productosCarrito: [],
+    token: '',
     setIsLogged: () => { },
     addCarrito: () => { },
-    setCarrito: () => { }
+    setCarrito: () => { },
+    setCarritoTotal: () => { },
+    setUser: () => { }
 });
 
 /* ejemplo productoCarrito = {
@@ -29,20 +32,22 @@ class TheNetBarProvider extends Component {
         user: {},
         isLogged: null,
         carritoTotal: 0,
-        productosCarrito: []
+        productosCarrito: [],
+        token: ''
     };
 
     componentDidMount() {
         if (localStorage.getItem('token') !== null) {
             let productosCarrito = [];
             let carritoTotal = 0;
+            const token = localStorage.getItem('token');
             if (localStorage.getItem('carrito') !== null) {
                 productosCarrito = JSON.parse(localStorage.getItem('carrito'));
                 productosCarrito.forEach(e => {
                     carritoTotal += (e.cantidad * e.p.precio);
                 });
             }
-            this.setState({ ...this.state, isLogged: true, productosCarrito, carritoTotal });
+            this.setState({ ...this.state, isLogged: true, productosCarrito, carritoTotal, token });
         } else {
             localStorage.clear();
         }
@@ -59,14 +64,18 @@ class TheNetBarProvider extends Component {
     // )
     // }
 
+    setUser = (user) => this.setState({ ...this.state, user });
+    setToken = (token) => this.setState({ ...this.state, token });
+
     setIsLogged = (isLogged, token) => {
         if (isLogged) {
             localStorage.setItem('token', token);
-            this.setState({ ...this.state, isLogged });
+            this.setState({ ...this.state, isLogged, token: token });
         } else {
-            // localStorage.removeItem('token');
-            localStorage.clear();
-            this.setState({ ...this.state, isLogged: null });
+            localStorage.removeItem('token');
+            localStorage.removeItem('carrito');
+            // localStorage.clear();
+            this.setState({ ...this.state, isLogged: null, carritoTotal: 0, productosCarrito: [], token: '' });
         }
     }
 
@@ -75,12 +84,14 @@ class TheNetBarProvider extends Component {
         productosCarrito,
         carritoTotal
     }, () => {
-        if (this.state.productosCarrito.length > 0 ) {
+        if (this.state.productosCarrito.length > 0) {
             localStorage.setItem('carrito', JSON.stringify(this.state.productosCarrito));
         } else {
             localStorage.removeItem('carrito');
         }
     });
+
+    setCarritoTotal = (newTotal) => this.setState({ ...this.state, carritoTotal: newTotal });
 
     addCarrito = (product, cantidad) => {
         const productoCarritoNew = { p: product, cantidad: cantidad };
@@ -112,7 +123,9 @@ class TheNetBarProvider extends Component {
                     ...this.state,
                     setIsLogged: this.setIsLogged,
                     addCarrito: this.addCarrito,
-                    setCarrito: this.setCarrito
+                    setCarrito: this.setCarrito,
+                    setCarritoTotal: this.setCarritoTotal,
+                    setUser: this.setUser
                 }}
             >
                 {this.props.children}
