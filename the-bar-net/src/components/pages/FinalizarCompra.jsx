@@ -8,19 +8,20 @@ import Form from 'react-bootstrap/Form';
 import SignUp from '../Forms/SignUp';
 import { TarjetasInput } from '../TarjetasInput';
 import { TheBarNetServerUrl } from '../context/Url';
+import { useHistory } from 'react-router-dom';
 
-const modalidadPago = [
+export const modalidadPago = [
     { id: 'efectivo', name: 'Efectivo' },
     { id: 'credito', name: 'Tarjeta de Crédito' },
     { id: 'debito', name: 'Tarjeta de Débito' }
 ];
-const modalidadEnvio = [
+export const modalidadEnvio = [
     { id: 'retiro', name: 'Retiro por Sucursal' },
     { id: 'envio', name: 'Envío a Domicilio' }
 ];
 
 export default function FinalizarCompra() {
-    const { productosCarrito, user, carritoTotal, token } = useContext(TheNetBar.Context);
+    const { productosCarrito, user, carritoTotal, token, setUser, setPedido } = useContext(TheNetBar.Context);
     const [actualUser, setActualUser] = useState(user);
     const [cardCompleted, setCardCompleted] = useState(false);
     const [modalidadPagoSeleccionada, setModalidadPagoSeleccionada] = useState('efectivo');
@@ -28,6 +29,7 @@ export default function FinalizarCompra() {
     const [eligioModalidadEnvio, setEligioModalidadEnvio] = useState(false);
     const [showDatosEnvio, setShowDatosEnvio] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const history = useHistory();
 
     const handleFinalizarCompra = useCallback((user) => {
         setShowModal(false);
@@ -38,19 +40,37 @@ export default function FinalizarCompra() {
         fechaActual = date + ' ' + time;
 
         const pedido = {
-            idUsuario: user.id,
+            idUsuario: actualUser.id,
             fecha: fechaActual,
             total: carritoTotal,
             tipoEnvio: modalidadEnvioSeleccionada,
             modalidadPago: modalidadPagoSeleccionada,
-            estado: ''
+            estado: modalidadPagoSeleccionada === 'efectivo' ? 'sin_pagar' : 'pagado'
         }
 
+        fetch(TheBarNetServerUrl.pedido, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors', // no-cors
+            body: JSON.stringify(pedido)
+        }).then(res => res.json())
+            .then(response => {
+                // const pedidoRta = response.rta;
+                // console.log('pedido', pedidoRta)
+                // setActualUser(userProfile);
+                setPedido(pedido);
+                history.push("/mis-pedidos");
+
+            });
+
+        // alert(JSON.stringify(pedido))
         // setActualUser(user);
         // setCompleteUserData(true);
         // console.log('end', user)
 
-    }, [carritoTotal, modalidadEnvioSeleccionada, modalidadPagoSeleccionada]);
+    }, [actualUser.id, carritoTotal, history, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, setPedido]);
 
     const handleSaveuserData = useCallback((user) => {
         setEligioModalidadEnvio(true);
@@ -59,22 +79,24 @@ export default function FinalizarCompra() {
 
     useEffect(() => {
         if (token !== "") {
-            const myHeaders = new Headers();
-            myHeaders.append('token', token);
-            myHeaders.append('Content-Type', "application/json");
-            fetch(TheBarNetServerUrl.login, {
-                mode: 'cors',
-                headers: myHeaders
-                // { 
-                //     "Content-Type": "application/json",
-                //     'token': token.toString() 
-                // }
+            fetch(TheBarNetServerUrl.verifyToken, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors', // no-cors
+                body: JSON.stringify({
+                    token: token
+                })
             }).then(res => res.json())
                 .then(response => {
-                    console.log(response.json());
+                    const userProfile = response.rta;
+                    console.log('token decoded', userProfile)
+                    setActualUser(userProfile);
+                    setUser(userProfile);
                 });
         }
-    }, [productosCarrito, token]);
+    }, [productosCarrito, setUser, token]);
 
     const ShowPedidoInformation = () => (
         <Card style={{
@@ -151,22 +173,24 @@ export default function FinalizarCompra() {
                         )}
                         <br /><br />
                         <h3>Datos de {modalidadEnvioSeleccionada === 'retiro' ? 'Facturación' : 'Envío'}</h3>
-                        <SignUp adminMode finalizarCompra handleFinalizarCompra={handleSaveuserData} user={{
-                            tipo: "encargado",
-                            nombre: "Micaela",
-                            apellido: "Saez",
-                            dni: 32874908,
-                            cuit: 11328749081,
-                            email: "micaaelasaez@gmail.com",
-                            password: "micabarnet",
-                            telefono: 1134091414,
-                            direccion: "Del Valle Iberlucea 2645",
-                            localidad: "Lanús",
-                            provincia: "Buenos Aires",
-                            codigoPostal: 1826
-                        }}
+                        {actualUser.nombre && <SignUp adminMode finalizarCompra handleFinalizarCompra={handleSaveuserData} user={actualUser
+                            //     {
+                            //     tipo: "encargado",
+                            //     nombre: "Micaela",
+                            //     apellido: "Saez",
+                            //     dni: 32874908,
+                            //     cuit: 11328749081,
+                            //     email: "micaaelasaez@gmail.com",
+                            //     password: "micabarnet",
+                            //     telefono: 1134091414,
+                            //     direccion: "Del Valle Iberlucea 2645",
+                            //     localidad: "Lanús",
+                            //     provincia: "Buenos Aires",
+                            //     codigoPostal: 1826
+                        }
                             showDatosEnvio={modalidadEnvioSeleccionada === 'envio'}
                         />
+                        }
                     </div>
                 </div>
                 <ShowPedidoInformation />

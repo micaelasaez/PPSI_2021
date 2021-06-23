@@ -12,6 +12,7 @@ import { TheNetBar } from './components/context/TheNetBarContext';
 import AdminView from './components/pages/AdminView';
 import SignUp from './components/Forms/SignUp';
 import Carrito from './components/pages/Carrito';
+import {MisPedidos} from './components/pages/MisPedidos';
 import FinalizarCompra from './components/pages/FinalizarCompra';
 
 function App() {
@@ -33,6 +34,9 @@ function App() {
         </Route>
         <Route path="/sign-up">
           <SignUp />
+        </Route>
+        <Route path="/mis-pedidos">
+          <MisPedidos />
         </Route>
         {/* <Route path="/new-product">
         </Route> */}

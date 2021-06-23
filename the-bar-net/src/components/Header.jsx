@@ -33,7 +33,7 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
                             <>
                             </>
                             : <>
-                                <Nav.Link href="/not-found" className={"header-letters"}>MI CUENTA</Nav.Link>
+                                <Nav.Link href="/mis-pedidos" className={"header-letters"}>MIS PEDIDOS</Nav.Link>
                                 <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
                             </>
                     ) : (

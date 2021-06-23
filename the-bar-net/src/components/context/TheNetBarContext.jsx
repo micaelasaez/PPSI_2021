@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 const TheNetBarContext = React.createContext({
     user: {},
+    pedido: {},
     isLogged: null,
     carritoTotal: 0,
     productosCarrito: [],
@@ -10,7 +11,8 @@ const TheNetBarContext = React.createContext({
     addCarrito: () => { },
     setCarrito: () => { },
     setCarritoTotal: () => { },
-    setUser: () => { }
+    setUser: () => { },
+    setPedido: () => { }
 });
 
 /* ejemplo productoCarrito = {
@@ -30,6 +32,7 @@ const TheNetBarContext = React.createContext({
 class TheNetBarProvider extends Component {
     state = {
         user: {},
+        pedido: {},
         isLogged: null,
         carritoTotal: 0,
         productosCarrito: [],
@@ -66,6 +69,7 @@ class TheNetBarProvider extends Component {
 
     setUser = (user) => this.setState({ ...this.state, user });
     setToken = (token) => this.setState({ ...this.state, token });
+    setPedido = (pedido) => this.setState({ ...this.state, pedido });
 
     setIsLogged = (isLogged, token) => {
         if (isLogged) {
@@ -125,7 +129,8 @@ class TheNetBarProvider extends Component {
                     addCarrito: this.addCarrito,
                     setCarrito: this.setCarrito,
                     setCarritoTotal: this.setCarritoTotal,
-                    setUser: this.setUser
+                    setUser: this.setUser,
+                    setPedido: this.setPedido
                 }}
             >
                 {this.props.children}

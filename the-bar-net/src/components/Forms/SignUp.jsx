@@ -49,7 +49,7 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
                 cuit: cuit,
                 email: email,
                 password: password,
-                telefono: caracteristica + ' ' + telephone,
+                telefono: caracteristica + telephone,
                 direccion: direccion,
                 localidad: localidad,
                 provincia: provincia,
@@ -136,8 +136,8 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
             setProvincia(user.provincia);
             setCp(user.codigoPostal.toString());
             setEmail(user.email);
-            setPassword(user.password);
-            setPasswordRepeat(user.password);
+            // setPassword(user.password);
+            // setPasswordRepeat(user.password);
 
             setMailError(false);
             setPasswordError(false);
@@ -154,16 +154,16 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
     const validDNI = dni.length === 8;
     const validCuit = cuit.length === 11;
     const validCaracteristica = user ? true : (caracteristica.length > 0 && caracteristica.length < 5);
-    const validTelephone = telephone.length > 5 && telephone.length < 13;
+    const validTelephone = telephone.length > 5 && telephone.length < 15;
     const validDireccion = direccion.length > 0;
     const validLocalidad = localidad.length > 0;
     const validProvincia = provincia.length > 0;
     const validCp = cp.length > 0 && cp.length < 5;
-    const validPass = password.length > 4;
+    const validPass = user ? true : password.length > 4;
 
     useEffect(() => {
         setPasswordError(!validPass);
-        const validPassRepeat = password === passwordRepeat;
+        const validPassRepeat = user ? true : password === passwordRepeat;
         setPasswordDifferent(validPassRepeat);
         const validMail = validateEmail(email);
         setMailError(validMail);
