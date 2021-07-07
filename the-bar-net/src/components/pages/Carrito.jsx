@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { useHistory } from 'react-router-dom';
+import fotoCombo from "../../utils/images/combo.jpg";
 
 export default function Carrito() {
     const [isCorrect, setIsCorrect] = useState(true);
@@ -66,7 +67,7 @@ export default function Carrito() {
 
     const handleFinalizarCompra = useCallback(() => {
         // console.log('end', productosCarrito)
-        isLogged !== null 
+        isLogged !== null
             ? history.push('/finalizar-compra')
             : setShowModal(true)
     }, [history, isLogged]);
@@ -80,42 +81,76 @@ export default function Carrito() {
                         ? <Table responsive>
                             <thead className="table-row-title">
                                 <tr>
-                                    <th colspan="2">PRODUCTO</th> <th>PRECIO</th> <th>CANTIDAD</th> <th>SUBTOTAL</th>
-                                    <th>BORRAR</th>
+                                    <th colSpan="2">PRODUCTO</th><th>PRECIO</th><th>CANTIDAD</th><th>SUBTOTAL</th><th>BORRAR</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {(Array.isArray(productosCarrito) && productosCarrito.length > 0)
                                     && productosCarrito.map(pCarrito => {
-                                        return <tr key={pCarrito.p.id} className="table-row">
-                                            <td>
-                                                <img src={pCarrito.p.fotos} style={{ width: '5rem', height: '5rem', margin: "auto" }} alt="" />
-                                            </td>
-                                            <td>{pCarrito.p.nombre}<br />{pCarrito.p.cantidad}</td>
-                                            <td>$ {pCarrito.p.precio}</td>
-                                            <td>
-                                                <Form.Group controlId="formBasicCAnt">
-                                                    <Form.Control type="number" name="cantidad"
-                                                        onChange={(value) => updateCantidad(value, pCarrito)}
-                                                        isInvalid={pCarrito.cantidad < 1 || pCarrito.cantidad > pCarrito.p.stockActual}
-                                                        defaultValue={pCarrito.cantidad}
-                                                        style={{ width: "90px", margin: "auto" }}
-                                                    />
-                                                    {pCarrito.cantidad > pCarrito.p.stockActual && <Form.Text className="text-muted-personalized">
-                                                        Disculpe, no contamos con ese stock disponible!
-                                                    </Form.Text>}
-                                                    {pCarrito.cantidad < 1 && <Form.Text className="text-muted-personalized">
-                                                        Ingrese un número válido como cantidad!
-                                                    </Form.Text>}
-                                                </Form.Group>
-                                            </td>
-                                            <td>$ {pCarrito.p.precio * pCarrito.cantidad}</td>
-                                            <td>
-                                                <Button variant="danger" size="sm" onClick={() => handleDelete(pCarrito)}>
-                                                    X
-                                                </Button>
-                                            </td>
-                                        </tr>
+                                        console.log(pCarrito)
+                                        if (pCarrito.idCombo) {
+                                            // PARA COMBOS
+                                            return <tr key={pCarrito.p.id} className="table-row">
+                                                <td>
+                                                    <div style={{ width: '5rem', height: '5rem', margin: "auto" }} className='img-combo'></div>
+                                                </td>
+                                                <td>{pCarrito.p.nombre}</td>
+                                                <td>$ {pCarrito.p.precio}</td>
+                                                <td>
+                                                    <Form.Group controlId="formBasicCant">
+                                                        <Form.Control type="number" name="cantidad"
+                                                            onChange={(value) => updateCantidad(value, pCarrito)}
+                                                            isInvalid={pCarrito.cantidad < 1 || pCarrito.cantidad > pCarrito.p.stockActual}
+                                                            defaultValue={pCarrito.cantidad}
+                                                            disabled
+                                                            style={{ width: "90px", margin: "auto" }}
+                                                        />
+                                                        {/* {pCarrito.cantidad > pCarrito.p.stockActual && <Form.Text className="text-muted-personalized">
+                                                            Disculpe, no contamos con ese stock disponible!
+                                                        </Form.Text>}
+                                                        {pCarrito.cantidad < 1 && <Form.Text className="text-muted-personalized">
+                                                            Ingrese un número válido como cantidad!
+                                                        </Form.Text>} */}
+                                                    </Form.Group>
+                                                </td>
+                                                <td>$ {pCarrito.p.precio * pCarrito.cantidad}</td>
+                                                <td>
+                                                    <Button variant="danger" size="sm" onClick={() => handleDelete(pCarrito)}>
+                                                        X
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        } else {
+                                            return <tr key={pCarrito.p.id} className="table-row">
+                                                <td>
+                                                    <img src={pCarrito.p.fotos ? pCarrito.p.fotos : fotoCombo} style={{ width: '5rem', height: '5rem', margin: "auto" }} alt="" />
+                                                </td>
+                                                <td>{pCarrito.p.nombre}<br />{pCarrito.p.cantidad}</td>
+                                                <td>$ {pCarrito.p.precio}</td>
+                                                <td>
+                                                    <Form.Group controlId="formBasicCant">
+                                                        <Form.Control type="number" name="cantidad"
+                                                            onChange={(value) => updateCantidad(value, pCarrito)}
+                                                            isInvalid={pCarrito.cantidad < 1 || pCarrito.cantidad > pCarrito.p.stockActual}
+                                                            defaultValue={pCarrito.cantidad}
+                                                            style={{ width: "90px", margin: "auto" }}
+                                                        />
+                                                        {pCarrito.cantidad > pCarrito.p.stockActual && <Form.Text className="text-muted-personalized">
+                                                            Disculpe, no contamos con ese stock disponible!
+                                                        </Form.Text>}
+                                                        {pCarrito.cantidad < 1 && <Form.Text className="text-muted-personalized">
+                                                            Ingrese un número válido como cantidad!
+                                                        </Form.Text>}
+                                                    </Form.Group>
+                                                </td>
+                                                <td>$ {pCarrito.p.precio * pCarrito.cantidad}</td>
+                                                <td>
+                                                    <Button variant="danger" size="sm" onClick={() => handleDelete(pCarrito)}>
+                                                        X
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        }
                                     })}
                             </tbody>
                         </Table>

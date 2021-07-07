@@ -21,7 +21,7 @@ export const modalidadEnvio = [
 ];
 
 export default function FinalizarCompra() {
-    const { productosCarrito, user, carritoTotal, token, setUser, setPedido } = useContext(TheNetBar.Context);
+    const { productosCarrito, user, carritoTotal, token, setUser, setPedido, setCarrito, setCarritoTotal } = useContext(TheNetBar.Context);
     const [actualUser, setActualUser] = useState(user);
     const [cardCompleted, setCardCompleted] = useState(false);
     const [modalidadPagoSeleccionada, setModalidadPagoSeleccionada] = useState('efectivo');
@@ -29,6 +29,7 @@ export default function FinalizarCompra() {
     const [eligioModalidadEnvio, setEligioModalidadEnvio] = useState(false);
     const [showDatosEnvio, setShowDatosEnvio] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showPedidoRegistrado, setShowPedidoRegistrado] = useState(false);
     const history = useHistory();
 
     const handleFinalizarCompra = useCallback((user) => {
@@ -57,12 +58,10 @@ export default function FinalizarCompra() {
             body: JSON.stringify(pedido)
         }).then(res => res.json())
             .then(response => {
-                // const pedidoRta = response.rta;
-                // console.log('pedido', pedidoRta)
-                // setActualUser(userProfile);
                 setPedido(pedido);
-                history.push("/mis-pedidos");
-
+                setShowPedidoRegistrado(true);
+                setCarrito([], 0);
+                setCarritoTotal(0);
             });
 
         // alert(JSON.stringify(pedido))
@@ -70,7 +69,7 @@ export default function FinalizarCompra() {
         // setCompleteUserData(true);
         // console.log('end', user)
 
-    }, [actualUser.id, carritoTotal, history, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, setPedido]);
+    }, [actualUser.id, carritoTotal, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, setCarrito, setCarritoTotal, setPedido]);
 
     const handleSaveuserData = useCallback((user) => {
         setEligioModalidadEnvio(true);
@@ -189,6 +188,7 @@ export default function FinalizarCompra() {
                             //     codigoPostal: 1826
                         }
                             showDatosEnvio={modalidadEnvioSeleccionada === 'envio'}
+                            continuarDisabled={modalidadPagoSeleccionada !== 'efectivo' && !cardCompleted}
                         />
                         }
                     </div>
@@ -204,9 +204,26 @@ export default function FinalizarCompra() {
                     </Modal.Body>
                     <Modal.Footer style={{ display: 'flex', justifyContent: 'space-around' }}>
                         <Button variant="danger" onClick={() => setShowModal(false)}>Editar Pedido</Button>
-                        <Button variant="primary" onClick={handleFinalizarCompra}
-                            disabled={modalidadPagoSeleccionada !== 'efectivo' && !cardCompleted}>
+                        <Button variant="primary" onClick={handleFinalizarCompra} >
                             Aceptar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showPedidoRegistrado} onHide={() => setShowPedidoRegistrado(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Pedido Registrado</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Gracias por tu compra!</p>
+                        <br />
+                        <p>Tu pedido ya se encuentra registrado, podes seguir su estado desde la sección de Mis Pedidos!</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => history.push("/home")}>
+                            Volver a la página principal
+                        </Button>
+                        <Button variant="primary" onClick={() => history.push("/mis-pedidos")}>
+                            Ir a Mis Pedidos
                         </Button>
                     </Modal.Footer>
                 </Modal>

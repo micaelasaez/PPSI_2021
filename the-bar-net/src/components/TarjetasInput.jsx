@@ -23,7 +23,7 @@ export const TarjetasInput = ({ handleValidData }) => {
         } else if (value.target.name === "date") {
             setDate(value.target.value);
         }
-    }, [number]);
+    }, []);
 
     useEffect(() => {
         const dateValid = date !== todayDate && date !== '';

@@ -48,8 +48,43 @@ export default function Login() {
                     if (token === "Incorrect login") {
                         setTryAgainText("Email o contraseña incorrectos!");
                     } else {
-                        setIsLogged(true, token);
-                        history.push("/home");
+                        fetch(TheBarNetServerUrl.verifyToken, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            mode: 'cors', // no-cors
+                            body: JSON.stringify({
+                                token: token
+                            })
+                        }).then(res => res.json())
+                            .then(response => {
+                                const userProfile = response.rta;
+                                setIsLogged(true, token, userProfile);
+                                let route = '';
+                                switch (userProfile.tipo) {
+                                    case 'admin':
+                                        route = "/home-admin";
+                                        break;
+                                    case 'encargado':
+                                        route = "/home-encargado";
+                                        break;
+                                    case 'empleado':
+                                        route = "/home-empleado";
+                                        break;
+                                    case 'repartidor':
+                                        route = "/home-repartidor";
+                                        break;
+                                    case 'cliente':
+                                        route = "/home";
+                                        break;
+
+                                    default:
+                                        route = "/home";
+                                        break;
+                                }
+                                history.push(route);
+                            });
                     }
                     setLoginLoading(false);
                 });

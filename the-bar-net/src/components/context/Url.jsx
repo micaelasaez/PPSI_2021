@@ -4,6 +4,12 @@ export const TheBarNetServerUrl = {
     login: baseURL + '/login',
     verifyToken: baseURL + '/login/verify',
     users: baseURL + '/usuarios',
+    usersType: baseURL + '/usuarios/type/',
     products: baseURL + '/productos',
-    pedido: baseURL + '/pedidos'
+    productPhoto: baseURL + '/productos/upload/',
+    pedido: baseURL + '/pedidos',
+    pedidosUsuario: baseURL + '/pedidos/user/',
+    category: baseURL + '/categorias/',
+    ofertas: baseURL + '/ofertas/',
+    combos: baseURL + '/combos/'
 };

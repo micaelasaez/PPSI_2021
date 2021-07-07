@@ -12,16 +12,16 @@ export default function UsuariosList() {
             <br />
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }}>
                 <Tab eventKey={active} title="Encargados">
-                    <ShowUsuarios type="encargados" />
+                    <ShowUsuarios type="encargado" />
                 </Tab>
                 <Tab eventKey="empleados" title="Empleados">
-                    <ShowUsuarios type="empleados" />
+                    <ShowUsuarios type="empleado" />
                 </Tab>
                 <Tab eventKey="repartidores" title="Repartidores">
-                    <ShowUsuarios type="repartidores" />
+                    <ShowUsuarios type="repartidor" />
                 </Tab>
                 <Tab eventKey="clientes" title="Clientes">
-                    <ShowUsuarios type="clientes" />
+                    <ShowUsuarios type="cliente" />
                 </Tab>
             </Tabs>
         </div>

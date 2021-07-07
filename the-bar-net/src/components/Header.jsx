@@ -6,7 +6,7 @@ import logoTheBarNet from "../utils/images/logo_the_bar_net.png";
 import logoCarrito from "../utils/images/logo_carrito.png";
 import { useHistory, useLocation } from 'react-router';
 
-export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
+export const Header = ({ user, isLogged, carritoTotal, setIsLogged }) => {
     const { pathname } = useLocation();
     const history = useHistory();
 
@@ -29,20 +29,29 @@ export const Header = ({ user, isLogged, carritoTotal, type, setIsLogged }) => {
                 <Nav.Link href="/home" className={"header-letters"}>INICIO</Nav.Link>
                 {
                     isLogged !== null ? (
-                        type === "admin" ?
+                        user.tipo === "admin" ?
                             <>
-                            </>
-                            : <>
-                                <Nav.Link href="/mis-pedidos" className={"header-letters"}>MIS PEDIDOS</Nav.Link>
                                 <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
                             </>
+                        : user.tipo === "encargado" ?
+                            <>
+                                <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
+                            </>
+                        : user.tipo === "repartidor" ?
+                            <>
+                                <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
+                            </>
+                        : <> {/* for users */}
+                            <Nav.Link href="/mis-pedidos" className={"header-letters"}>MIS PEDIDOS</Nav.Link>
+                            <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
+                        </>
                     ) : (
                         pathname !== "/login" && <Nav.Link href="/login" className={"header-letters"}>INICIAR SESIÓN</Nav.Link>
                     )
                 }
                 {
-                    // (type !== "admin" && isLogged !== null) &&
-                    type !== "admin" &&
+                    // (user.tipo !== "admin" && isLogged !== null) &&
+                    (isLogged === null || user.tipo === "cliente") &&
                     <div className={"header-letters"} onClick={() => history.push("/carrito")}>
                         <img
                             alt="The Bar Net"

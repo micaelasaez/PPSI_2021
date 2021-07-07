@@ -14,7 +14,8 @@ const validateEmail = (mail) => {
     return false;
 }
 
-export default function SignUp({ adminMode, user, finalizarCompra, handleFinalizarCompra, showDatosEnvio = true }) {
+export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra, handleFinalizarCompra,
+    showDatosEnvio = true, continuarDisabled = false, close }) {
     const { setIsLogged } = useContext(TheNetBar.Context);
 
     const [type, setType] = useState("");
@@ -31,6 +32,7 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
+    const [bloqueado, setBloqueado] = useState(false);
 
     const [mailError, setMailError] = useState(false);
     const [passwordError, setPasswordError] = useState("");
@@ -54,7 +56,7 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
                 localidad: localidad,
                 provincia: provincia,
                 codigoPostal: cp,
-                confiable: "yes",
+                confiable: bloqueado ? 'no' : 'yes',
                 // tipo: "cliente"
                 tipo: adminMode ? type : user ? user.tipo : "cliente"
             };
@@ -62,6 +64,21 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
             // fetch 
             if (user) {
                 // PUT to update user
+                fetch(TheBarNetServerUrl.users + '/' + user.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors', // no-cors
+                    body: JSON.stringify(userNew)
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (close) {
+                            alert('usuario actualizado');
+                            close();
+                        }
+                    });
                 if (finalizarCompra) {
                     handleFinalizarCompra({ ...userNew, tipo: 'cliente' });
                 }
@@ -77,7 +94,7 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
                     .catch(error => console.error('Error:', error))
                     .then(response => {
                         if (response.rta === "added") {
-                            history.push({ 
+                            history.push({
                                 pathname: "/login",
                                 state: email
                             });
@@ -120,8 +137,10 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
             setDni(value.target.value);
         } else if (adminMode && value.target.name === "type") {
             setType(value.target.value);
+        } else if (empleadoMode && value.target.name === "bloqueado") {
+            setBloqueado(value.target.value === 'yes' ? true : false);
         }
-    }, [adminMode]);
+    }, [adminMode, empleadoMode]);
 
     useEffect(() => {
         if (user) {
@@ -136,18 +155,18 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
             setProvincia(user.provincia);
             setCp(user.codigoPostal.toString());
             setEmail(user.email);
-            // setPassword(user.password);
-            // setPasswordRepeat(user.password);
+            setPassword(user.password);
+            setPasswordRepeat(user.password);
 
-            setMailError(false);
+            setMailError(true);
             setPasswordError(false);
             setPasswordDifferent(false);
             setTryAgainText("");
 
-            setSubmitDisabled(false);
+            setSubmitDisabled(continuarDisabled);
             console.log(user)
         }
-    }, [user]);
+    }, [continuarDisabled, user]);
 
     const validName = name.length > 1;
     const validSurname = surname.length > 1;
@@ -270,7 +289,17 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
                         </Form.Control>
                     </Form.Group>
                 }
-                {!finalizarCompra && <>
+                {(empleadoMode && user) &&
+                    <Form.Group controlId="formBasicType">
+                        <Form.Label className="login-form-tittles">Está bloqueado?</Form.Label>
+                        <Form.Control as="select" onChange={handleChange} id="bloqueado">
+                            {/* {console.log('user', user.confiable === 'no')} */}
+                            <option key='yes' defaultChecked={user.confiable === 'no'}>SI</option>
+                            <option key='no' defaultChecked={user.confiable === 'yes'}>NO</option>
+                        </Form.Control>
+                    </Form.Group>
+                }
+                {(!finalizarCompra && !user) && <>
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label className="login-form-tittles">Contraseña</Form.Label>
                         <Form.Control type="password" name="password" onChange={handleChange} isValid={!passwordError && password.length > 1}
@@ -306,7 +335,7 @@ export default function SignUp({ adminMode, user, finalizarCompra, handleFinaliz
                 </Button>
                 <br />
                 <br />
-                {!finalizarCompra && <Nav.Link href="/login" className={"login"}>
+                {(!finalizarCompra && !user) && <Nav.Link href="/login" className={"login"}>
                     Ya tengo cuenta
                 </Nav.Link>}
             </Form>

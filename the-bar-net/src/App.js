@@ -3,16 +3,19 @@ import './App.css';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Home from './components/pages/Home';
 import Combos from './components/pages/Combos';
-import Ofertas from './components/pages/Ofertas';
+import { Ofertas } from './components/pages/Ofertas';
 import NotFound from './components/pages/NotFound';
 import Login from './components/pages/Login';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
 import { TheNetBar } from './components/context/TheNetBarContext';
 import AdminView from './components/pages/AdminView';
+import EmpleadoView from './components/pages/EmpleadoView';
+import EncargadoView from './components/pages/EncargadoView';
+import RepartidorView from './components/pages/RepartidorView';
 import SignUp from './components/Forms/SignUp';
 import Carrito from './components/pages/Carrito';
-import {MisPedidos} from './components/pages/MisPedidos';
+import { MisPedidos } from './components/pages/MisPedidos';
 import FinalizarCompra from './components/pages/FinalizarCompra';
 
 function App() {
@@ -22,7 +25,7 @@ function App() {
       <TheNetBar.Consumer>
         {
           ({ user, isLogged, carritoTotal, setIsLogged }) => (
-            <Header carritoTotal={carritoTotal} isLogged={isLogged} type={user} setIsLogged={setIsLogged}/>
+            <Header carritoTotal={carritoTotal} isLogged={isLogged} user={user} setIsLogged={setIsLogged} />
           )}
       </TheNetBar.Consumer>
       <Switch>
@@ -45,6 +48,15 @@ function App() {
         </Route>
         <Route path="/home-admin">
           <AdminView />
+        </Route>
+        <Route path="/home-encargado">
+          <EncargadoView />
+        </Route>
+        <Route path="/home-empleado">
+          <EmpleadoView />
+        </Route>
+        <Route path="/home-repartidor">
+          <RepartidorView />
         </Route>
         <Route path="/carrito">
           <Carrito />

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import { TheBarNetServerUrl } from './Url';
 
 const TheNetBarContext = React.createContext({
     user: {},
@@ -43,14 +45,33 @@ class TheNetBarProvider extends Component {
         if (localStorage.getItem('token') !== null) {
             let productosCarrito = [];
             let carritoTotal = 0;
+            let user = {};
             const token = localStorage.getItem('token');
+            
             if (localStorage.getItem('carrito') !== null) {
                 productosCarrito = JSON.parse(localStorage.getItem('carrito'));
                 productosCarrito.forEach(e => {
                     carritoTotal += (e.cantidad * e.p.precio);
                 });
             }
-            this.setState({ ...this.state, isLogged: true, productosCarrito, carritoTotal, token });
+
+            fetch(TheBarNetServerUrl.verifyToken, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors', // no-cors
+                body: JSON.stringify({
+                    token: token
+                })
+            }).then(res => res.json())
+                .then(response => {
+                    user = response.rta;
+                })
+                .finally(() => {
+                    console.log('loggued user', user);
+                    this.setState({ ...this.state, isLogged: true, productosCarrito, carritoTotal, token, user });
+                });
         } else {
             localStorage.clear();
         }
@@ -71,10 +92,10 @@ class TheNetBarProvider extends Component {
     setToken = (token) => this.setState({ ...this.state, token });
     setPedido = (pedido) => this.setState({ ...this.state, pedido });
 
-    setIsLogged = (isLogged, token) => {
+    setIsLogged = (isLogged, token, user) => {
         if (isLogged) {
             localStorage.setItem('token', token);
-            this.setState({ ...this.state, isLogged, token: token });
+            this.setState({ ...this.state, isLogged, token: token, user });
         } else {
             localStorage.removeItem('token');
             localStorage.removeItem('carrito');

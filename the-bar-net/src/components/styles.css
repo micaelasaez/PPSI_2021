@@ -89,6 +89,10 @@
     width: 600px;
     height: 300px;
 }
+.img-combo {
+    background-image: url("../utils/images/combo.jpg");
+    background-size: cover;
+}
 .carrousel-item {
     overflow: hidden;
 }
@@ -160,4 +164,9 @@
     background-color: #9262b9;
     color: black;
     font-weight: bold;
+}
+.card-style {
+    background-color: #9781b1 !important;
+    box-shadow: 5px 5px #311847;
+    border: 2px solid #461e6b;
 }
