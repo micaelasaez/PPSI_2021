@@ -16,7 +16,7 @@ const validateEmail = (mail) => {
 
 export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra, handleFinalizarCompra,
     showDatosEnvio = true, continuarDisabled = false, close }) {
-    const { setIsLogged } = useContext(TheNetBar.Context);
+    // const { setIsLogged } = useContext(TheNetBar.Context);
 
     const [type, setType] = useState("");
     const [name, setName] = useState("");
@@ -32,7 +32,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
-    const [bloqueado, setBloqueado] = useState(false);
+    const [confiable, setConfiable] = useState('no');
 
     const [mailError, setMailError] = useState(false);
     const [passwordError, setPasswordError] = useState("");
@@ -56,7 +56,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                 localidad: localidad,
                 provincia: provincia,
                 codigoPostal: cp,
-                confiable: bloqueado ? 'no' : 'yes',
+                confiable: confiable,
                 // tipo: "cliente"
                 tipo: adminMode ? type : user ? user.tipo : "cliente"
             };
@@ -75,8 +75,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                     .catch(error => console.error('Error:', error))
                     .then(response => {
                         if (close) {
-                            alert('usuario actualizado');
-                            close();
+                            // alert();
+                            close('El usuario fue actualizado correctamente');
                         }
                     });
                 if (finalizarCompra) {
@@ -137,8 +137,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             setDni(value.target.value);
         } else if (adminMode && value.target.name === "type") {
             setType(value.target.value);
-        } else if (empleadoMode && value.target.name === "bloqueado") {
-            setBloqueado(value.target.value === 'yes' ? true : false);
+        } else if (empleadoMode && value.target.name === "confiable") {
+            setConfiable(value.target.value);
         }
     }, [adminMode, empleadoMode]);
 
@@ -202,28 +202,28 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             <Form className={user ? "login-form-pop-up" : "login-form"}>
                 <br />
                 <br />
-                <Form.Group controlId="formBasicName" className="inline-name-surname">
+                <Form.Group className="inline-name-surname">
                     <Form.Label className="login-form-tittles">Nombre</Form.Label>
                     <Form.Control type="text" name="name" onChange={handleChange} isValid={validName}
                         defaultValue={user ? name : ""} />
                 </Form.Group>
-                <Form.Group controlId="formBasicSurname">
+                <Form.Group>
                     <Form.Label className="login-form-tittles">Apellido</Form.Label>
                     <Form.Control type="text" name="surname" onChange={handleChange} isValid={validSurname}
                         defaultValue={user ? surname : ""} />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicDni">
+                <Form.Group>
                     <Form.Label className="login-form-tittles">DNI (sin puntos ni comas)</Form.Label>
                     <Form.Control type="number" name="dni" onChange={handleChange} isValid={validDNI}
                         defaultValue={user ? dni : ""} />
                 </Form.Group>
-                <Form.Group controlId="formBasicCuit">
+                <Form.Group>
                     <Form.Label className="login-form-tittles">Cuit (sin guiones)</Form.Label>
                     <Form.Control type="number" name="cuit" onChange={handleChange} isValid={validCuit}
                         defaultValue={user ? cuit : ""} />
                 </Form.Group>
-                <Form.Group controlId="formBasicTelephone">
+                <Form.Group>
                     <Form.Label className="login-form-tittles">Telefono con característica</Form.Label>
                     <div style={{ display: 'flex' }}>
                         {user
@@ -237,7 +237,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                     </div>
                 </Form.Group>
 
-                <Form.Group controlId="formBasicEmail">
+                <Form.Group>
                     <Form.Label className="login-form-tittles">Email</Form.Label>
                     <Form.Control
                         type="email"
@@ -252,23 +252,23 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                 </Form.Group>
 
                 {showDatosEnvio && <>
-                    <Form.Group controlId="formBasicAddress" className="inline-name-surname">
+                    <Form.Group className="inline-name-surname">
                         <Form.Label className="login-form-tittles">Dirección</Form.Label>
                         <Form.Control type="text" name="direccion" onChange={handleChange} isValid={validDireccion}
                             defaultValue={user ? direccion : ""} />
                     </Form.Group>
-                    <Form.Group controlId="formBasicLocalidad">
+                    <Form.Group>
                         <Form.Label className="login-form-tittles">Localidad</Form.Label>
                         <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
                             defaultValue={user ? localidad : ""} />
                     </Form.Group>
-                    <Form.Group controlId="formBasicProvincia">
+                    <Form.Group>
                         <Form.Label className="login-form-tittles">Provincia</Form.Label>
                         <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia}
                             defaultValue={user ? provincia : ""} />
                     </Form.Group>
                     <br />
-                    <Form.Group controlId="formBasicCp">
+                    <Form.Group>
                         <div style={{ display: 'flex' }}>
                             <Form.Label className="login-form-tittles" style={{ width: '60%' }}>Código Postal</Form.Label>
                             <Form.Control type="number" name="cp" onChange={handleChange} style={{ width: '40%' }}
@@ -280,7 +280,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                 </>}
                 <br />
                 {(adminMode && !finalizarCompra) &&
-                    <Form.Group controlId="formBasicType">
+                    <Form.Group>
                         <Form.Control as="select" onChange={handleChange} id="type">
                             <option key='encargado'>Encargado</option>
                             <option key='empleado'>Empleado</option>
@@ -290,17 +290,26 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                     </Form.Group>
                 }
                 {(empleadoMode && user) &&
-                    <Form.Group controlId="formBasicType">
-                        <Form.Label className="login-form-tittles">Está bloqueado?</Form.Label>
-                        <Form.Control as="select" onChange={handleChange} id="bloqueado">
-                            {/* {console.log('user', user.confiable === 'no')} */}
-                            <option key='yes' defaultChecked={user.confiable === 'no'}>SI</option>
-                            <option key='no' defaultChecked={user.confiable === 'yes'}>NO</option>
-                        </Form.Control>
+                    <Form.Group>
+                        <Form.Label className="login-form-tittles">¿Es confiable?</Form.Label>
+                        {user.confiable === 'yes'
+                            ? <>
+                                <Form.Control as="select" onChange={handleChange} id="confiable" name="confiable">
+                                    <option key='yes' value='yes' defaultChecked>SI</option>
+                                    <option key='no' value='no'>NO</option>
+                                </Form.Control>
+                            </>
+                            : <>
+                                <Form.Control as="select" onChange={handleChange} id="confiable" name="confiable">
+                                    <option key='no' value='no' defaultChecked>NO</option>
+                                    <option key='yes' value='yes'>SI</option>
+                                </Form.Control>
+                            </>
+                        }
                     </Form.Group>
                 }
                 {(!finalizarCompra && !user) && <>
-                    <Form.Group controlId="formBasicPassword">
+                    <Form.Group>
                         <Form.Label className="login-form-tittles">Contraseña</Form.Label>
                         <Form.Control type="password" name="password" onChange={handleChange} isValid={!passwordError && password.length > 1}
                             defaultValue={user ? password : ""}
@@ -309,7 +318,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                             Ingrese una contraseña con más de 4 caracteres.
                         </Form.Text>}
                     </Form.Group>
-                    <Form.Group controlId="formBasicPasswordRepeat">
+                    <Form.Group>
                         <Form.Label className="login-form-tittles">Repetir contraseña</Form.Label>
                         <Form.Control type="password" name="password-repeat" onChange={handleChange} isValid={passwordDiferent && passwordRepeat.length > 1}
                             defaultValue={user ? passwordRepeat : ""}

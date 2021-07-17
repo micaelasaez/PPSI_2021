@@ -49,7 +49,7 @@ export default function AddProduct() {
             stockMin: minStock,
             stockMax: maxStock,
             // foto: photo,
-            fechaVencimiento: ''
+            fechaVencimiento: fechaVencimiento
         };
         console.log(product);
         fetch(TheBarNetServerUrl.products, {
@@ -82,7 +82,7 @@ export default function AddProduct() {
                 setAlertMsg('Algo falló con la creación del producto!');
                 setShowAlert(true);
             });
-    }, [name, category, price, quantity, quantityType, stock, minStock, maxStock, photo]);
+    }, [name, category, price, quantity, quantityType, stock, minStock, maxStock, fechaVencimiento, photo]);
 
     const handleChange = useCallback((value) => {
         if (value.target.id === "photo") {

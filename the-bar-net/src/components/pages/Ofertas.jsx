@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom';
 import { useCallback } from 'react';
 
 export const Ofertas = () => {
+    const todayDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
     const { addCarrito } = useContext(TheNetBar.Context);
     const [ofertas, setOfertas] = useState([]);
     const [adminMode, setAdminMode] = useState(false);
@@ -48,7 +49,7 @@ export const Ofertas = () => {
                 // alert('borrada')
                 setAlertMsg('Oferta borrada correctamente!');
                 setShowAlert(true);
-            
+
                 fetch(TheBarNetServerUrl.ofertas, {
                     mode: 'cors'
                 }).then(res => res.json())
@@ -62,9 +63,35 @@ export const Ofertas = () => {
             });
     }, []);
 
-    const handleUpdateOferta = useCallback((p, fechaFin) => {
-        console.log('update', p, fechaFin);
-    }, []);
+    const handleUpdateOferta = useCallback((value, p) => {
+        console.log('update', value, p);
+        const newOfertas = ofertas.map(o => o.id === p.id ? { ...o, fechaFin: value } : o);
+        const datosOfertaUpdate = {
+            idProducto: p.idProducto, 
+            nuevoPrecio: p.nuevoPrecio,
+            fechaInicio: p.fechaInicio,
+            fechaFin: value
+        };
+        
+        fetch(TheBarNetServerUrl.ofertas + p.id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(datosOfertaUpdate)
+        }).then(res => res.json())
+            .then(response => {
+                console.log(response);
+                setOfertas(newOfertas);
+                setAlertMsg('Fecha de fin de oferta modificada correctamente!');
+                setShowAlert(true);
+            })
+            .catch(() => {
+                setAlertMsg('Algo falló borrando la oferta!');
+                setShowAlert(true);
+            });
+    }, [ofertas]);
 
     useEffect(() => {
         if (state && state.adminMode) {
@@ -74,13 +101,21 @@ export const Ofertas = () => {
             mode: 'cors'
         }).then(res => res.json())
             .then(response => {
-                setOfertas(response.rta);
+                // console.log('ofertas', response.rta)
+                // console.log('nuevo', 
+                const ofertasVigentes = (response.rta.filter(element => {
+                    let a = (new Date(element.fechaFin))
+                    let b = (new Date(todayDate))
+                    return a > b;
+                }));
+                setOfertas(ofertasVigentes);
             })
-    }, [state]);
+    }, [state, todayDate]);
 
     return (
         <div style={{ height: '100%' }}>
             <h1 className="tittle-style" style={{ marginTop: "50px" }}>OFERTAS</h1>
+            <h5>A continuación se muestran los detalles de las ofertas disponibles actualmente. La fecha de fin de oferta es editable.</h5>
             {ofertas.length > 0
                 ? <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', alignItems: 'stretch' }}>
                     {ofertas.map(o => (

@@ -8,7 +8,7 @@ import { TheBarNetServerUrl } from '../context/Url';
 import { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
-const estadosPedido = [
+export const estadosPedido = [
     { key: 'sin_pagar', title: 'No fue pagado todavía' },
     { key: 'pagado', title: 'El pago fue registrado, se encuentra en preparación' },
     { key: 'a_entregar', title: 'Su pedido está listo para ser entregado' },

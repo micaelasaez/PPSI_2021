@@ -21,6 +21,8 @@ export default function UsuariosList() {
                     <ShowUsuarios type="repartidor" />
                 </Tab>
                 <Tab eventKey="clientes" title="Clientes">
+                    <br/>
+                    <h4>Seleccione algún cliente para ver sus pedidos realizados.</h4>
                     <ShowUsuarios type="cliente" />
                 </Tab>
             </Tabs>

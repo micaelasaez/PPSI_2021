@@ -47,7 +47,11 @@ export default function Login() {
                     const token = response.rta;
                     if (token === "Incorrect login") {
                         setTryAgainText("Email o contraseña incorrectos!");
-                    } else {
+                    } 
+                    else if (token === "usuario no confiable") {
+                        setTryAgainText("Su usuario se encuentra bloqueado en el sistema!")
+                    }
+                    else {
                         fetch(TheBarNetServerUrl.verifyToken, {
                             method: 'POST',
                             headers: {

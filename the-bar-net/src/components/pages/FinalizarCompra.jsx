@@ -27,7 +27,7 @@ export default function FinalizarCompra() {
     const [modalidadPagoSeleccionada, setModalidadPagoSeleccionada] = useState('efectivo');
     const [modalidadEnvioSeleccionada, setModalidadEnvioSeleccionada] = useState('retiro');
     const [eligioModalidadEnvio, setEligioModalidadEnvio] = useState(false);
-    const [showDatosEnvio, setShowDatosEnvio] = useState(false);
+    // const [showDatosEnvio, setShowDatosEnvio] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showPedidoRegistrado, setShowPedidoRegistrado] = useState(false);
     const history = useHistory();
@@ -172,25 +172,28 @@ export default function FinalizarCompra() {
                         )}
                         <br /><br />
                         <h3>Datos de {modalidadEnvioSeleccionada === 'retiro' ? 'Facturación' : 'Envío'}</h3>
-                        {actualUser.nombre && <SignUp adminMode finalizarCompra handleFinalizarCompra={handleSaveuserData} user={actualUser
-                            //     {
-                            //     tipo: "encargado",
-                            //     nombre: "Micaela",
-                            //     apellido: "Saez",
-                            //     dni: 32874908,
-                            //     cuit: 11328749081,
-                            //     email: "micaaelasaez@gmail.com",
-                            //     password: "micabarnet",
-                            //     telefono: 1134091414,
-                            //     direccion: "Del Valle Iberlucea 2645",
-                            //     localidad: "Lanús",
-                            //     provincia: "Buenos Aires",
-                            //     codigoPostal: 1826
-                        }
-                            showDatosEnvio={modalidadEnvioSeleccionada === 'envio'}
-                            continuarDisabled={modalidadPagoSeleccionada !== 'efectivo' && !cardCompleted}
-                        />
-                        }
+                        {actualUser.nombre && (
+                            <SignUp adminMode finalizarCompra
+                                handleFinalizarCompra={handleSaveuserData}
+                                user={actualUser
+                                    //     {
+                                    //     tipo: "encargado",
+                                    //     nombre: "Micaela",
+                                    //     apellido: "Saez",
+                                    //     dni: 32874908,
+                                    //     cuit: 11328749081,
+                                    //     email: "micaaelasaez@gmail.com",
+                                    //     password: "micabarnet",
+                                    //     telefono: 1134091414,
+                                    //     direccion: "Del Valle Iberlucea 2645",
+                                    //     localidad: "Lanús",
+                                    //     provincia: "Buenos Aires",
+                                    //     codigoPostal: 1826
+                                }
+                                showDatosEnvio={modalidadEnvioSeleccionada === 'envio'}
+                                continuarDisabled={modalidadPagoSeleccionada !== 'efectivo' && !cardCompleted}
+                            />
+                        )}
                     </div>
                 </div>
                 <ShowPedidoInformation />

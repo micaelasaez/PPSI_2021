@@ -9,21 +9,21 @@ import { TheBarNetServerUrl } from '../context/Url';
 import ProductSmall from '../ProductSmall';
 import InputGroup from 'react-bootstrap/InputGroup';
 
-const categories = [
-    { name: 'cervezas', title: 'Cervezas' },
-    { name: 'vinos', title: 'Vinos' },
-    { name: 'espumantes', title: 'Espumantes' },
-    { name: 'vodka', title: 'Vodkas' },
-    { name: 'whiskys', title: 'Whiskys' },
-    { name: 'sin-alcohol', title: 'Sin Alcohol' }
-];
-const quantityTypes = [
-    { key: "ml", type: "ml" },
-    { key: "l", type: "l" },
-    { key: "six-pack", type: "Six Pack" },
-    { key: "12u", type: "Caja 12 unidades" },
-    { key: "24u", type: "Caja 24 unidades" }
-];
+// const categories = [
+//     { name: 'cervezas', title: 'Cervezas' },
+//     { name: 'vinos', title: 'Vinos' },
+//     { name: 'espumantes', title: 'Espumantes' },
+//     { name: 'vodka', title: 'Vodkas' },
+//     { name: 'whiskys', title: 'Whiskys' },
+//     { name: 'sin-alcohol', title: 'Sin Alcohol' }
+// ];
+// const quantityTypes = [
+//     { key: "ml", type: "ml" },
+//     { key: "l", type: "l" },
+//     { key: "six-pack", type: "Six Pack" },
+//     { key: "12u", type: "Caja 12 unidades" },
+//     { key: "24u", type: "Caja 24 unidades" }
+// ];
 
 export default function AddCombos() {
     const [productos, setProductos] = useState([]);
@@ -83,7 +83,9 @@ export default function AddCombos() {
         setProductosCombo([]);
         setTotalCombo(0);
         setNuevoPrecio(0);
-    }, []);
+        setFechaInicio(todayDate);
+        setFechaFin('');
+    }, [todayDate]);
 
     const addCombo = useCallback((p, cantidad) => {
         const pCombo = {
@@ -228,6 +230,7 @@ export default function AddCombos() {
                                     <Form.Control
                                         type="number" id="nuevoPrecio"
                                         placeholder='Ingrese nuevo Precio'
+                                        value={nuevoPrecio}
                                         onChange={handleChange}
                                         isValid={nuevoPrecio > 0}
                                     />
@@ -274,7 +277,7 @@ export default function AddCombos() {
                 </Modal.Body>
                 <Modal.Footer>
                 {/* window.location.reload(); */}
-                    <Button variant="primary" onClick={() => { setShowAlert(false); window.location.reload(); }}>
+                    <Button variant="primary" onClick={() => { setShowAlert(false); cleanCombo();}}>
                         Volver
                     </Button>
                 </Modal.Footer>

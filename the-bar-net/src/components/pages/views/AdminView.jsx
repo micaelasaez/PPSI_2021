@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import '../styles.css';
+import '../../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Login from './Login';
 import Button from 'react-bootstrap/Button';
-import UsuariosList from './UsuariosList';
-import AddProduct from '../Forms/AddProduct';
-import AddCatergory from '../Forms/AddCatergory';
-import SignUp from '../Forms/SignUp';
+import UsuariosList from '../UsuariosList';
+import AddProduct from '../../Forms/AddProduct';
+import AddCatergory from '../../Forms/AddCatergory';
+import SignUp from '../../Forms/SignUp';
 
 export default function AdminView() {
     const active = "products";

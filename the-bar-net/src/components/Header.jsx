@@ -33,15 +33,12 @@ export const Header = ({ user, isLogged, carritoTotal, setIsLogged }) => {
                             <>
                                 <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
                             </>
-                        : user.tipo === "encargado" ?
+                        : user.tipo === "encargado" || user.tipo === "empleado" || user.tipo === "repartidor"?
                             <>
                                 <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
                             </>
-                        : user.tipo === "repartidor" ?
-                            <>
-                                <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
-                            </>
-                        : <> {/* for users */}
+                        : <>
+                            {/* for users */}
                             <Nav.Link href="/mis-pedidos" className={"header-letters"}>MIS PEDIDOS</Nav.Link>
                             <Nav.Link onClick={handleLogOut} className={"header-letters"}>CERRAR SESIÓN</Nav.Link>
                         </>

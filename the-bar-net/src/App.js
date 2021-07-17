@@ -9,14 +9,15 @@ import Login from './components/pages/Login';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
 import { TheNetBar } from './components/context/TheNetBarContext';
-import AdminView from './components/pages/AdminView';
-import EmpleadoView from './components/pages/EmpleadoView';
-import EncargadoView from './components/pages/EncargadoView';
-import RepartidorView from './components/pages/RepartidorView';
+import AdminView from './components/pages/views/AdminView';
+import EmpleadoView from './components/pages/views/EmpleadoView';
+import EncargadoView from './components/pages/views/EncargadoView';
+import RepartidorView from './components/pages/views/RepartidorView';
 import SignUp from './components/Forms/SignUp';
 import Carrito from './components/pages/Carrito';
 import { MisPedidos } from './components/pages/MisPedidos';
 import FinalizarCompra from './components/pages/FinalizarCompra';
+import Stocks from './components/pages/Stocks';
 
 function App() {
 
@@ -72,6 +73,9 @@ function App() {
         </Route>
         <Route path="/show-productos">
           <ShowProductos />
+        </Route>
+        <Route path="/stocks">
+          <Stocks />
         </Route>
         <Route path="/not-found">
           <NotFound />
