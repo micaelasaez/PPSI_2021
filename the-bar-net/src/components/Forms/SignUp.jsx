@@ -15,7 +15,7 @@ const validateEmail = (mail) => {
 }
 
 export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra, handleFinalizarCompra,
-    showDatosEnvio = true, continuarDisabled = false, close }) {
+    showDatosEnvio = true, continuarDisabled = false, close, changeView }) {
     // const { setIsLogged } = useContext(TheNetBar.Context);
 
     const [type, setType] = useState("");
@@ -32,7 +32,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
-    const [confiable, setConfiable] = useState('no');
+    const [confiable, setConfiable] = useState('yes');
 
     const [mailError, setMailError] = useState(false);
     const [passwordError, setPasswordError] = useState("");
@@ -89,15 +89,21 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                         'Content-Type': 'application/json'
                     },
                     mode: 'cors', // no-cors
-                    body: JSON.stringify(userNew)
+                    body: JSON.stringify({ ...userNew, confiable: 'yes' })
                 }).then(res => res.json())
                     .catch(error => console.error('Error:', error))
                     .then(response => {
                         if (response.rta === "added") {
-                            history.push({
-                                pathname: "/login",
-                                state: email
-                            });
+                            if (!adminMode) {
+                                history.push({
+                                    pathname: "/login",
+                                    state: email
+                                });
+                            } else {
+                                //history.push('/home-admin')
+                                //alert('creado')
+                                changeView();
+                            }
                         } else if (response.rta === "added") {
                             setTryAgainText("Ese usuario ya se encuentra registrado en el sistema!");
                         } else {
@@ -277,15 +283,21 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                             />
                         </div>
                     </Form.Group>
+                    {/* {
+                        finalizarCompra && (
+                            // show agregado por envio al CP o si no hay envio a ese CP
+                            // + change en el submit
+                        )
+                    } */}
                 </>}
                 <br />
                 {(adminMode && !finalizarCompra) &&
                     <Form.Group>
-                        <Form.Control as="select" onChange={handleChange} id="type">
-                            <option key='encargado'>Encargado</option>
-                            <option key='empleado'>Empleado</option>
-                            <option key='repartidor'>Repartidor</option>
-                            <option key='usuario' defaultValue>Usuario</option>
+                        <Form.Control as="select" onChange={handleChange} id="type" name="type">
+                            <option key='encargado' value='encargado'>Encargado</option>
+                            <option key='empleado' value='empleado'>Empleado</option>
+                            <option key='repartidor' value='repartidor'>Repartidor</option>
+                            <option key='usuario' value='usuario' defaultValue>Usuario</option>
                         </Form.Control>
                     </Form.Group>
                 }
@@ -344,7 +356,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                 </Button>
                 <br />
                 <br />
-                {(!finalizarCompra && !user) && <Nav.Link href="/login" className={"login"}>
+                {(!finalizarCompra && !user && !adminMode) && <Nav.Link href="/login" className={"login"}>
                     Ya tengo cuenta
                 </Nav.Link>}
             </Form>

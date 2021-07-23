@@ -2,50 +2,79 @@ import React, { useState } from 'react';
 import '../../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import UsuariosList from '../UsuariosList';
 import AddProduct from '../../Forms/AddProduct';
 import AddCatergory from '../../Forms/AddCatergory';
 import SignUp from '../../Forms/SignUp';
+import Sucursal from '../../Sucursal';
+import BancosYPromos from '../BancosYPromos';
+import Categories from '../../Categories';
+import AddPrecioEnvio from '../../Forms/AddPrecioEnvio';
 
 export default function AdminView() {
     const active = "products";
     const [showUsuarios, setShowUsuarios] = useState(false);
+    const [activeKey, setActiveKey] = useState(active);
+    const [disableSelect, setDisableSelect] = useState(true);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMsg, setAlertMsg] = useState('');
 
     return (
         <div>
             <br />
-            <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }}>
+            <h5 style={{ marginBottom: '25px' }}>ADMIN</h5>
+            <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }} onSelect={(p) => setActiveKey(p)}>
                 <Tab eventKey="categorias" title="CATEGORIAS">
-                    <AddCatergory />
+                    {activeKey === 'categorias' && <>
+                        <AddCatergory updateCategorias={() => { setDisableSelect(false); setDisableSelect(true); }} />
+                        <h4>CATEGORÍAS DISPONIBLES</h4>
+                        <Categories disableSelect={disableSelect} />
+                    </>}
                 </Tab>
                 <Tab eventKey={active} title="BEBIDAS">
-                    <AddProduct />
+                    {activeKey === active && <AddProduct />}
                 </Tab>
                 <Tab eventKey="users" title="USUARIOS">
-                    <Button onClick={() => setShowUsuarios(false)} className="personalized-button" 
-                        style={{ height: '50px', width: '300px', margin: '25px' }}>
-                        AGREGAR USUARIOS
-                    </Button>
-                    <Button onClick={() => setShowUsuarios(true)} className="personalized-button" 
-                        style={{ height: '50px', width: '300px', margin: '25px' }}>
-                        LISTAS DE USUARIOS
-                    </Button>
-                    {showUsuarios
-                        ? <UsuariosList />
-                        : <SignUp adminMode={true}/>
-                    }
+                    {activeKey === 'users' && <>
+                        <Button onClick={() => setShowUsuarios(s => !s)} className="personalized-button"
+                            style={{ height: '50px', width: '300px', margin: '25px' }}>
+                            {showUsuarios ? 'AGREGAR USUARIOS' : 'LISTAS DE USUARIOS'}
+                        </Button>
+                        {showUsuarios
+                            ? <UsuariosList />
+                            : <SignUp adminMode={true} changeView={() => {
+                                    setAlertMsg('Usuario creado!');
+                                    setShowAlert(true);
+                                    setShowUsuarios(true);
+                                }} />
+                        }
+                    </>}
                 </Tab>
                 <Tab eventKey="bancos-tarjetas" title="BANCOS Y TARJETAS">
-                    <h3>BANCOS Y TARJETAS</h3>
+                    {activeKey === 'bancos-tarjetas' && <BancosYPromos />}
                 </Tab>
                 <Tab eventKey="sucursal" title="SUCURSAL">
-                    <h3>SUCURSAL</h3>
+                    {activeKey === 'sucursal' && <Sucursal adminMode />}
                 </Tab>
                 <Tab eventKey="precios-envio" title="PRECIOS DE ENVÍOS">
-                    <h3>PRECIOS DE ENVÍOS</h3>
+                    {activeKey === 'precios-envio' && <AddPrecioEnvio />}
                 </Tab>
             </Tabs>
+            <Modal show={showAlert} onHide={() => setShowAlert(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Aviso</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{alertMsg}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => setShowAlert(false)}>
+                        Aceptar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

@@ -11,8 +11,8 @@ export default function RepartidorView() {
 
     return (
         <div>
-            REPARTIDOR
             <br />
+            <h5 style={{ marginBottom: '25px' }}>REPARTIDOR</h5>
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }}>
                 <Tab eventKey="pedidos" title="PEDIDOS">
                     {/* <h3>PEDIDOS DEL SITIO</h3> */}

@@ -6,10 +6,11 @@ import { Footer } from '../Footer';
 import Categories from '../Categories';
 import { TheNetBar } from '../context/TheNetBarContext';
 import { useHistory } from 'react-router-dom';
+import PromocionesBancarias from '../PromocionesBancarias';
 
-export default function Home({ carritoTotal, isLogged, ...props }) {
+export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
-    const { user } = useContext(TheNetBar.Context);
+    const { user, isLogged } = useContext(TheNetBar.Context);
     const history = useHistory();
 
     useEffect(() => {
@@ -18,29 +19,33 @@ export default function Home({ carritoTotal, isLogged, ...props }) {
         //     setIsLoading(false);
         // }, 1000)
         let route = '';
-        switch (user.tipo) {
-            case 'admin':
-                route = "/home-admin";
-                break;
-            case 'encargado':
-                route = "/home-encargado";
-                break;
-            case 'empleado':
-                route = "/home-empleado";
-                break;
-            case 'repartidor':
-                route = "/home-repartidor";
-                break;
-            case 'cliente':
-                route = "/home";
-                break;
+        if (isLogged === null) {
+            route = '/home';
+        } else {
+            switch (user.tipo) {
+                case 'admin':
+                    route = "/home-admin";
+                    break;
+                case 'encargado':
+                    route = "/home-encargado";
+                    break;
+                case 'empleado':
+                    route = "/home-empleado";
+                    break;
+                case 'repartidor':
+                    route = "/home-repartidor";
+                    break;
+                case 'cliente':
+                    route = "/home";
+                    break;
 
-            default:
-                route = "/home";
-                break;
+                default:
+                    route = "/home";
+                    break;
+            }
         }
         history.push(route);
-    }, [history, user])
+    }, [history, isLogged, user])
 
     return (
         <div style={{ miHeight: "100%" }}>
@@ -52,6 +57,9 @@ export default function Home({ carritoTotal, isLogged, ...props }) {
                 : <div>
                     <div style={{ marginTop: "20px" }}>
                         <CarouselHome />
+                    </div>
+                    <div>
+                        <PromocionesBancarias />
                     </div>
                     <div style={{ marginTop: "80px", marginBottom: "30px" }}>
                         <h1 className="tittle-style">

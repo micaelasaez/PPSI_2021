@@ -48,8 +48,8 @@ export default function Login() {
                     if (token === "Incorrect login") {
                         setTryAgainText("Email o contraseña incorrectos!");
                     } 
-                    else if (token === "usuario no confiable") {
-                        setTryAgainText("Su usuario se encuentra bloqueado en el sistema!")
+                    else if (token === "Untrusted user") {
+                        setTryAgainText("Su usuario se encuentra bloqueado en el sistema!\nComuníquese con los encargados del sistema para poder realizar compras en el sitio.");
                     }
                     else {
                         fetch(TheBarNetServerUrl.verifyToken, {
@@ -121,7 +121,6 @@ export default function Login() {
             <Form className="login-form">
                 <br />
                 <br />
-                {console.log(state)}
                 <Form.Group controlId="formBasicEmail">
                     <Form.Label className="login-form-tittles">Email</Form.Label>
                     <Form.Control

@@ -8,6 +8,7 @@ import NotFound from './components/pages/NotFound';
 import Login from './components/pages/Login';
 import { Header } from './components/Header';
 import ShowProductos from './components/pages/ShowProductos';
+import AllProductos from './components/pages/AllProductos';
 import { TheNetBar } from './components/context/TheNetBarContext';
 import AdminView from './components/pages/views/AdminView';
 import EmpleadoView from './components/pages/views/EmpleadoView';
@@ -73,6 +74,9 @@ function App() {
         </Route>
         <Route path="/show-productos">
           <ShowProductos />
+        </Route>
+        <Route path="/productos">
+          <AllProductos />
         </Route>
         <Route path="/stocks">
           <Stocks />

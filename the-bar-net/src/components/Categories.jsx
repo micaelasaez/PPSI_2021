@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useHistory } from 'react-router';
 
-export default function Categories() {
+export default function Categories({ disableSelect = false }) {
     const history = useHistory();
 
     const arrayCategoriesFstRow = [
@@ -20,10 +20,12 @@ export default function Categories() {
     ];
 
     const handleClick = category => {
-        history.push({ 
-            pathname: "/show-productos",
-            state: category
-        });
+        if (!disableSelect) {
+            history.push({
+                pathname: "/show-productos",
+                state: category
+            });
+        }
     }
 
     return (

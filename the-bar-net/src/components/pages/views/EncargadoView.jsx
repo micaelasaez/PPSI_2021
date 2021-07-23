@@ -10,6 +10,8 @@ import AddOfertas from '../../Forms/AddOfertas';
 import AddCombos from '../../Forms/AddCombo';
 import { useHistory } from 'react-router-dom';
 import Stocks from '../Stocks';
+import AddPromoBanco from '../../Forms/AddPromoBanco';
+import BancosYPromos from '../BancosYPromos';
 
 export default function EncargadoView() {
     const active = "products";
@@ -22,7 +24,14 @@ export default function EncargadoView() {
             <h5 style={{ marginBottom: '25px' }}>ENCARGADO</h5>
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white', fontWeight: 500 }} onSelect={(p) => setActiveKey(p)}>
                 <Tab eventKey={active} title="BEBIDAS">
-                    {(activeKey === active) && <AddProduct />}
+                    {(activeKey === active) && <>
+                        <div style={{ marginTop: '50px' }}>
+                            <Button className="personalized-button" onClick={() => history.push({ pathname: "/productos", state: { adminMode: true } })}>
+                                VER BEBIDAS ACTUALES DEL SITIO
+                            </Button>
+                        </div>
+                        <AddProduct />
+                    </>}
                 </Tab>
                 <Tab eventKey="stocks" title="MANEJO DE STOCKS">
                     {activeKey === 'stocks' && <Stocks />}
@@ -51,7 +60,7 @@ export default function EncargadoView() {
                     <h3>BANCOS Y TARJETAS</h3>
                 </Tab> */}
                 <Tab eventKey="promociones-bancarias" title="PROMOCIONES BANCARIAS">
-                    <h3>PROMOCIONES BANCARIAS</h3>
+                    {activeKey === 'promociones-bancarias' && <BancosYPromos />}
                 </Tab>
                 <Tab eventKey="users" title="USUARIOS">
                     {activeKey === 'users' && <>

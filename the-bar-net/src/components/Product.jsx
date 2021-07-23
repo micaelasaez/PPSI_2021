@@ -5,8 +5,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
+// adminMode is for oferta
+// adminProdMode us for producto
 export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta, adminMode = false, handleDeleteOferta,
-    handleUpdateOferta, disableOferta }) {
+    handleUpdateOferta, disableOferta, adminProdMode = false, handleDeleteProd }) {
     const todayDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
     const [cantidad, setCantidad] = useState(1);
     const [fechaInicio, setFechaInicio] = useState(todayDate);
@@ -30,7 +32,7 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
     // const fechaFinValid = fechaFin !== null;
     const fechaFinValid = true;
 
-    const handleChange = useCallback((value, p ) => {
+    const handleChange = useCallback((value, p) => {
         switch (value.target.id) {
             case "nuevoPrecio":
                 setNuevoPrecio(value.target.value);
@@ -88,38 +90,39 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                                 </Form.Text>} */}
                             </Form.Group>
 
-                            <br/>
-                            <br/>
+                            <br />
+                            <br />
                             <Button variant="danger" onClick={() => handleDeleteOferta(p)}>
                                 {/* disabled={!(fechaFinValid && fechaInicioValid && nuevoPrecioValid)}> */}
                                 BORRAR OFERTA
                             </Button>
-                            {/* <Button variant="dark" onClick={() => handleUpdateOferta(p)}
-                                disabled={!fechaFinValid}>
-                                GUARDAR OFERTA
-                            </Button> */}
                         </div>
-                        : <>
-                            {/* <p>Fecha Venc: {p.fechaVencimiento}</p> */}
-                            <Form.Group controlId="formBasicCAnt">
-                                <Form.Control type="number" name="cantidad"
-                                    onChange={(value) => setCantidad(Number.parseInt(value.target.value))}
-                                    isInvalid={cantidad < 1 || cantidad > p.stockActual}
-                                    defaultValue={cantidad}
-                                    style={{ width: "90px", margin: "auto" }}
-                                />
-                                {cantidad > p.stockActual && <Form.Text className="text-muted-personalized">
-                                    Disculpe, no contamos con ese stock disponible!
-                                </Form.Text>}
-                                {cantidad < 1 && <Form.Text className="text-muted-personalized">
-                                    Ingrese un número válido como cantidad!
-                                </Form.Text>}
-                            </Form.Group>
-                            <Button variant="dark" onClick={() => addCarrito(p, cantidad)}>AGREGAR AL CARRITO</Button>
-                        </>
+                        : adminProdMode ? <div>
+                            <Button variant="danger" onClick={() => handleDeleteProd(p)}>
+                                {/* disabled={!(fechaFinValid && fechaInicioValid && nuevoPrecioValid)}> */}
+                                BORRAR BEBIDA
+                            </Button>
+                        </div>
+                            : <>
+                                <Form.Group controlId="formBasicCAnt">
+                                    <Form.Control type="number" name="cantidad"
+                                        onChange={(value) => setCantidad(Number.parseInt(value.target.value))}
+                                        isInvalid={cantidad < 1 || cantidad > p.stockActual}
+                                        defaultValue={cantidad}
+                                        style={{ width: "90px", margin: "auto" }}
+                                    />
+                                    {cantidad > p.stockActual && <Form.Text className="text-muted-personalized">
+                                        Disculpe, no contamos con ese stock disponible!
+                                    </Form.Text>}
+                                    {cantidad < 1 && <Form.Text className="text-muted-personalized">
+                                        Ingrese un número válido como cantidad!
+                                    </Form.Text>}
+                                </Form.Group>
+                                <Button variant="dark" onClick={() => addCarrito(p, cantidad)}>AGREGAR AL CARRITO</Button>
+                            </>
                     : <div><br />
                         <h3>Stock Actual: {p.stockActual}</h3><br />
-                        <p> 
+                        <p>
                             <Form.Label>Fecha de Vencimiento:</Form.Label>
                             <input type="date" id="date-venc" name="date-venc" value={fechaVenc} disabled />
                         </p>

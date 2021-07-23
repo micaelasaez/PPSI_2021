@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { modalidadEnvio, modalidadPago } from './pages/FinalizarCompra';
 import { estadosPedido } from './pages/MisPedidos';
 
-export default function ShowUsuarios({ type, onSelect }) {
+export default function ShowUsuarios({ type, showListNoConfiables = false }) {
     /**tipo: [admin, encargado, empleado, cliente] */
     const [users, setUsers] = useState([]);
     const [showEditUser, setShowEditUser] = useState(null);
@@ -37,7 +37,12 @@ export default function ShowUsuarios({ type, onSelect }) {
                 console.log(response);
                 const usersArr = response.rta;
                 if (Array.isArray(usersArr) && usersArr.length > 0) {
-                    setUsers(usersArr);
+                    if (!showListNoConfiables) {
+                        setUsers(usersArr);
+                    } else {
+                        const noConfiablesList = usersArr.filter(u => u.confiable === 'no');
+                        setUsers(noConfiablesList);
+                    }
                 } else {
                     setUsers([]);
                 }
@@ -46,7 +51,7 @@ export default function ShowUsuarios({ type, onSelect }) {
 
     useEffect(() => {
         getUsers();
-    }, []);
+    }, [showListNoConfiables]);
 
     const handleDelete = useCallback((user) => {
         console.log('delete', user)
@@ -55,8 +60,7 @@ export default function ShowUsuarios({ type, onSelect }) {
             method: 'DELETE'
         }).then(res => res.json())
             .then(response => {
-                console.log(response);
-                // alert('borrada')
+                // console.log(response);
                 setAlertMsg('Usuario borrado correctamente!');
                 setShowAlert(true);
                 getUsers();
@@ -98,6 +102,7 @@ export default function ShowUsuarios({ type, onSelect }) {
                 .then(response => {
                     console.log(response);
                     setPedidosUsuarioSeleccionado(response.rta);
+                    setAlertMsg('');
                     setShowAlert(true);
                 });
         }
@@ -109,7 +114,7 @@ export default function ShowUsuarios({ type, onSelect }) {
         }
         return (
             pedidosUsuarioSeleccionado.length > 0
-                ? <div> 
+                ? <div>
                     <Table responsive>
                         <thead>
                             <tr>
@@ -148,78 +153,89 @@ export default function ShowUsuarios({ type, onSelect }) {
     return (
         <>
             <h1 className="tittle-style" style={{ marginBottom: "30px", fontSize: "25px", marginTop: "40px" }}>{type.toUpperCase()}</h1>
-            <Table responsive>
-                <thead>
-                    <tr>
-                        <th>Nombre</th> <th>Apellido</th>
-                        <th>DNI</th> <th>CUIT</th>
-                        <th>Email</th> <th>Telefono</th>
-                        <th>Dirección</th> <th>Localidad</th> <th>Provincia</th> <th>CP</th>
-                        <th>¿Es confiable?</th> <th>Editar</th> <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {(Array.isArray(users) && users.length > 0)
-                        && users.map(user => {
-                            return <tr key={user.nombre} className="table-row" onClick={() => handleOnSelect(user)}>
-                                <td>{user.nombre}</td>
-                                <td>{user.apellido}</td>
-                                <td>{user.dni}</td>
-                                <td>{user.cuit}</td>
-                                <td>{user.email}</td>
-                                <td>{user.telefono}</td>
-                                <td>{user.direccion}</td>
-                                <td>{user.localidad}</td>
-                                <td>{user.provincia}</td>
-                                <td>{user.codigoPostal}</td>
-                                <td>
-                                    {
-                                        user.confiable === 'yes'
-                                            ? <Figure onClick={() => handleEdit(user)}>
-                                                <Figure.Image
-                                                    width={40}
-                                                    height={40}
-                                                    alt="171x180"
-                                                    src={notBlockedIcon}
-                                                />
-                                            </Figure>
-                                            : <Figure onClick={() => handleEdit(user)}>
-                                                <Figure.Image
-                                                    width={40}
-                                                    height={40}
-                                                    alt="171x180"
-                                                    src={blockedIcon}
-                                                />
-                                            </Figure>
-                                    }
-                                </td>
-                                <td>
-                                    <Figure onClick={() => handleEdit(user)}>
-                                        <Figure.Image
-                                            width={40}
-                                            height={40}
-                                            alt="171x180"
-                                            src={editIcon}
-                                        />
-                                        {/* <h6>EDITAR</h6> */}
-                                    </Figure>
-                                </td>
-                                <td>
-                                    <Figure onClick={() => handleDelete(user)}>
-                                        <Figure.Image
-                                            width={40}
-                                            height={40}
-                                            alt="171x180"
-                                            src={deleteIcon}
-                                        />
-                                        {/* <h6>ELIMINAR</h6> */}
-                                    </Figure>
-                                </td>
-                            </tr>
-                        })
-                    }
-                </tbody>
-            </Table>
+            {showListNoConfiables && <div className="tittle-style" style={{ marginBottom: "30px", fontSize: "26px", textShadow: '2px 2px #df0b0b' }} >
+                LISTA DE NO CONFIABLES</div>}
+            {(Array.isArray(users) && users.length > 0)
+                ?
+                <Table responsive>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th> <th>Apellido</th>
+                            <th>DNI</th> <th>CUIT</th>
+                            <th>Email</th> <th>Telefono</th>
+                            <th>Dirección</th> <th>Localidad</th> <th>Provincia</th> <th>CP</th>
+                            <th>¿Es confiable?</th> <th>Editar</th> <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(Array.isArray(users) && users.length > 0)
+                            && users.map(user => {
+                                return <tr key={user.nombre} className="table-row">
+                                    {/* <div onClick={() => handleOnSelect(user)}> */}
+                                        <td onClick={() => handleOnSelect(user)}>{user.nombre}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.apellido}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.dni}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.cuit}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.email}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.telefono}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.direccion}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.localidad}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.provincia}</td>
+                                        <td onClick={() => handleOnSelect(user)}>{user.codigoPostal}</td>
+                                    {/* </div> */}
+                                    <td>
+                                        {
+                                            user.confiable === 'yes'
+                                                ? <Figure onClick={() => handleEdit(user)}>
+                                                    <Figure.Image
+                                                        width={40}
+                                                        height={40}
+                                                        alt="171x180"
+                                                        src={notBlockedIcon}
+                                                    />
+                                                </Figure>
+                                                : <Figure onClick={() => handleEdit(user)}>
+                                                    <Figure.Image
+                                                        width={40}
+                                                        height={40}
+                                                        alt="171x180"
+                                                        src={blockedIcon}
+                                                    />
+                                                </Figure>
+                                        }
+                                    </td>
+                                    <td>
+                                        <Figure onClick={() => handleEdit(user)}>
+                                            <Figure.Image
+                                                width={40}
+                                                height={40}
+                                                alt="171x180"
+                                                src={editIcon}
+                                            />
+                                            {/* <h6>EDITAR</h6> */}
+                                        </Figure>
+                                    </td>
+                                    <td>
+                                        <Figure onClick={() => handleDelete(user)}>
+                                            <Figure.Image
+                                                width={40}
+                                                height={40}
+                                                alt="171x180"
+                                                src={deleteIcon}
+                                            />
+                                            {/* <h6>ELIMINAR</h6> */}
+                                        </Figure>
+                                    </td>
+                                </tr>
+                            })
+                        }
+                    </tbody>
+                </Table>
+                : <div>
+                    <h4>No hay usuarios en esta categoría!</h4>
+                    <br/><br/><br/>
+                </div>
+            }
             <Modal show={showEditUser !== null} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Usuario</Modal.Title>
@@ -234,11 +250,12 @@ export default function ShowUsuarios({ type, onSelect }) {
                 </Modal.Header>
                 <Modal.Body>
                     <p>{alertMsg}</p>
-                    {pedidosUsuario}
+                    {(pedidosUsuarioSeleccionado !== null && type === 'cliente') &&
+                        pedidosUsuario}
                 </Modal.Body>
                 <Modal.Footer>
                     {/* window.location.reload(); */}
-                    <Button variant="primary" onClick={() => { setShowAlert(false); setPedidosUsuarioSeleccionado([]); }    }>
+                    <Button variant="primary" onClick={() => { setShowAlert(false); setPedidosUsuarioSeleccionado([]); }}>
                         Volver
                     </Button>
                 </Modal.Footer>

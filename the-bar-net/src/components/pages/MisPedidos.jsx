@@ -9,13 +9,13 @@ import { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
 export const estadosPedido = [
-    { key: 'sin_pagar', title: 'No fue pagado todavía' },
-    { key: 'pagado', title: 'El pago fue registrado, se encuentra en preparación' },
-    { key: 'a_entregar', title: 'Su pedido está listo para ser entregado' },
-    { key: 'en_camino', title: 'Su pedido se encuentra en camino' },
-    { key: 'entregado', title: 'Este pedido ya fue entregado' },
-    { key: 'cancelado', title: 'Este pedido fue cancelado' },
-    { key: 'rechazado', title: 'Este pedido fue rechazado' }
+    { key: 'sin_pagar', name: 'Sin pagar', title: 'No fue pagado todavía' },
+    { key: 'pagado', name: 'Pago efectuado', title: 'El pago fue registrado, se encuentra en preparación' },
+    { key: 'a_entregar', name: 'Listo para entregar', title: 'Su pedido está listo para ser entregado' },
+    { key: 'en_camino', name: 'En camino', title: 'Su pedido se encuentra en camino' },
+    { key: 'entregado', name: 'Entregado', title: 'Este pedido ya fue entregado' },
+    { key: 'cancelado', name: 'Cancelado', title: 'Este pedido fue cancelado' },
+    { key: 'rechazado', name: 'Rechazado', title: 'Este pedido fue rechazado' }
 ];
 
 export const MisPedidos = () => {
