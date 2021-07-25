@@ -35,17 +35,34 @@ export default function ShowUsuarios({ type, showListNoConfiables = false }) {
             .catch(error => console.error('Error:', error))
             .then(response => {
                 console.log(response);
-                const usersArr = response.rta;
-                if (Array.isArray(usersArr) && usersArr.length > 0) {
-                    if (!showListNoConfiables) {
-                        setUsers(usersArr);
-                    } else {
-                        const noConfiablesList = usersArr.filter(u => u.confiable === 'no');
-                        setUsers(noConfiablesList);
-                    }
-                } else {
-                    setUsers([]);
-                }
+                let usersArr = response.rta;
+                setUsers([]);
+                fetch(TheBarNetServerUrl.preciosEnvios, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                }).then(res => res.json())
+                    .then(response => {
+                        const localidades = response.rta;
+                        usersArr = usersArr.map(u => {
+                            const localidadName = localidades.find(l => l.id === Number.parseInt(u.localidad))?.localidad;
+                            return { ...u, localidad: localidadName};
+                        })
+
+                        if (Array.isArray(usersArr) && usersArr.length > 0) {
+                            if (!showListNoConfiables) {
+                                setUsers(usersArr);
+                            } else {
+                                const noConfiablesList = usersArr.filter(u => u.confiable === 'no');
+                                console.log(noConfiablesList)
+                                setUsers(noConfiablesList);
+                            }
+                        } else {
+                            setUsers([]);
+                        }
+                    });
             });
     }
 
@@ -170,6 +187,9 @@ export default function ShowUsuarios({ type, showListNoConfiables = false }) {
                     <tbody>
                         {(Array.isArray(users) && users.length > 0)
                             && users.map(user => {
+                                if (showListNoConfiables && user.confiable === 'yes') {
+                                    return <></>;
+                                }
                                 return <tr key={user.nombre} className="table-row">
                                     {/* <div onClick={() => handleOnSelect(user)}> */}
                                         <td onClick={() => handleOnSelect(user)}>{user.nombre}</td>

@@ -62,17 +62,18 @@ export default function ProductCombo({ combo, setNombreCombo, editMode = false, 
     useEffect(() => {
         if (combo.productos.length > 0) {
             combo.productos.forEach(prod => {
-                // console.log('p', prod)
+                // console.log('p', prod);
                 fetch(TheBarNetServerUrl.products + `/${prod.idProducto}`, {
                     mode: 'cors'
                 })
                     .then(res => res.json())
                     .then(response => {
-                        console.log('rta', response)
-                        let producto = response.rta[0];
-                        // console.log(prod.idProducto, producto)
-                        producto.id = prod.idProducto;
-                        setProductosCombo(prod => [...prod, producto]);
+                        // console.log('rta', response)
+                        if (response.rta.length > 0) {
+                            let producto = response.rta[0];
+                            producto.id = prod.idProducto;
+                            setProductosCombo(prod => [...prod, producto]);
+                        }
                     })
             });
         }
@@ -84,7 +85,7 @@ export default function ProductCombo({ combo, setNombreCombo, editMode = false, 
             productosCombo.forEach(pCombo => {
                 nombreCombo += `${pCombo.nombre} - ${pCombo.cantidad} / `;
             });
-            setNombreCombo(nombreCombo)
+            setNombreCombo(nombreCombo);
         }
     }, [combo.id, productosCombo, setNombreCombo]);
 
@@ -94,13 +95,14 @@ export default function ProductCombo({ combo, setNombreCombo, editMode = false, 
             ? <>
                 <Card style={{ width: 'fit-content', height: 'fit-content', margin: "20px", display: 'wrap', flexDirection: 'row' }}>
                     {productosCombo.map(pCombo => {
+                        // console.log('pCombo', pCombo)
                         let pComboCantidadProd = 0;
                         combo.productos.forEach(prod => {
                             if (prod.idProducto === pCombo.id) {
                                 pComboCantidadProd = prod.cantidad;
                             }
                         });
-                        return <div style={{ margin: "20px", marginRight: '50px' }}>
+                        return <div style={{ margin: "20px", marginRight: '50px' }} key={pCombo.id}>
                             <Card.Img variant="top" src={pCombo.fotos} style={{ width: '15rem', height: '15rem', margin: "auto" }} />
                             <div>
                                 <Card.Title>{pCombo.nombre} - {pCombo.cantidad}</Card.Title>
@@ -152,12 +154,12 @@ export default function ProductCombo({ combo, setNombreCombo, editMode = false, 
                             <Form.Group controlId="formBasicCode">
                                 <Form.Label >Fecha de Fin de Combo</Form.Label>
                                 <InputGroup>
-                                <input
-                                    type="date" id="date-fin" name="date"
-                                    value={fechaFin === '' ? combo.fechaFin : fechaFin} min={combo.fechaInicio}
-                                    onChange={handleChange}
-                                    style={{ margin: 'auto' }}
-                                />
+                                    <input
+                                        type="date" id="date-fin" name="date"
+                                        value={fechaFin === '' ? combo.fechaFin : fechaFin} min={combo.fechaInicio}
+                                        onChange={handleChange}
+                                        style={{ margin: 'auto' }}
+                                    />
                                 </InputGroup>
 
                                 {/* {(fechaFin === '') && <Form.Text className="text-muted-personalized">

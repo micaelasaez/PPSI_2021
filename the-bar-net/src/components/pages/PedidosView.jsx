@@ -47,49 +47,22 @@ export default function PedidosView() {
                 .then(res => res.json())
                 .then(response => {
                     const user = response.rta[0];
-                    const newPedidoToShow = {
-                        ...pedido, usuario: user, showProds: false, productos: [
-                            {
-                                stockMax: 53,
-                                cantidad: " 473 ml",
-                                fechaVencimiento: "",
-                                fotos: "https://statics.dinoonline.com.ar/imagenes/full_600x600_ma/3100659_f.jpg",
-                                nombre: "Pack Cerveza Patagonia Weisse",
-                                precio: 700,
-                                stockActual: 42,
-                                stockMin: 30
-                            },
-                            {
-                                stockMax: 53,
-                                cantidad: " 473 ml",
-                                fechaVencimiento: "",
-                                fotos: "https://statics.dinoonline.com.ar/imagenes/full_600x600_ma/3100659_f.jpg",
-                                nombre: "Pack Cerveza Patagonia Weisse",
-                                precio: 700,
-                                stockActual: 42,
-                                stockMin: 30
-                            }, {
-                                stockMax: 53,
-                                cantidad: " 473 ml",
-                                fechaVencimiento: "",
-                                fotos: "https://statics.dinoonline.com.ar/imagenes/full_600x600_ma/3100659_f.jpg",
-                                nombre: "Pack Cerveza Patagonia Weisse",
-                                precio: 700,
-                                stockActual: 42,
-                                stockMin: 30
+                    const newPedidoToShow = { ...pedido, usuario: user };
+
+                    fetch(TheBarNetServerUrl.productoPedido + `/${pedido.id}`, {
+                        mode: 'cors'
+                    })
+                        .then(res => res.json())
+                        .then(response => {
+                            console.log(response.rta);
+                            if (response.rta.length > 0) {
+                                const productos = response.rta.map(r => r[0]);
+                                newPedidoToShow.productos = productos;
+                            } else {
+                                newPedidoToShow.productos = [];
                             }
-                        ]
-                    };
-                    // fetch(TheBarNetServerUrl.productoPedido + `/${pedido.id}`, {
-                    //     mode: 'cors'
-                    // })
-                    //     .then(res => res.json())
-                    //     .then(response => {
-                    //         console.log(response);
-                    //         pedidosToShow[index].productos = response.rta;
-                    //         setPedidosToShow(pedidosToShow);
-                    //     });
-                    setPedidosToShow(p => [...p, newPedidoToShow]);
+                            setPedidosToShow(p => [...p, newPedidoToShow]);
+                        });
                 })
                 .catch(() => {
                     setPedidosToShow([]);
@@ -152,6 +125,31 @@ export default function PedidosView() {
             });
     }, [pedidosToShow]);
 
+    const showProductos = (p) => {
+        const prodsToShow = [];
+        p.productos.forEach(prod => {
+            const index = prodsToShow.findIndex(pts => pts.prod.fotos === prod.fotos);
+            if (index !== -1) {
+                prodsToShow[index].cantidad++;
+            } else {
+                prodsToShow.push({
+                    prod: prod,
+                    cantidad: 1
+                });
+            }
+        });
+        return prodsToShow.map(p => (
+            <Card style={{ width: '20rem', height: 'fit-content', marginTop: '10px' }}>
+                <Card.Img variant="top" src={p.prod.fotos}
+                    style={{ width: '5rem', height: '5rem', margin: "auto" }} />
+                <Card.Body>
+                    <Card.Title>{p.prod.nombre} - {p.prod.cantidad}</Card.Title>
+                    <Card.Title>Cant. unidades: {p.cantidad}</Card.Title>
+                </Card.Body>
+            </Card>
+        ));
+    }
+
     return (
         <div>
             <h1 className="tittle-style" style={styles.title}>PEDIDOS REALIZADOS</h1>
@@ -191,8 +189,7 @@ export default function PedidosView() {
                                             <span>{(modalidadEnvio.find(m => m.id === p.tipoEnvio))?.name}</span>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <span>Estado del pedido:</span>
-                                            {/* <span>{(estadosPedido.find(pe => pe.key === p.estado))?.name}</span> */}
+                                            <span>Cambiar estado del pedido:</span>
                                             <Form.Control as="select" onChange={(value) => handleUpdateEstado(value, p)} id="type"
                                                 style={{ width: '200px' }}>
                                                 {estadosPedido.map(e => (
@@ -204,26 +201,15 @@ export default function PedidosView() {
                                         </div>
                                     </div>
                                     <br />
-                                    {<div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
-                                        {
-                                            p.productos.map(prod => (
-                                                <Card style={{ width: '20rem', height: 'fit-content', marginTop: '10px' }}>
-                                                    <Card.Img variant="top" src={prod.fotos}
-                                                        style={{ width: '5rem', height: '5rem', margin: "auto" }} />
-                                                    <Card.Body>
-                                                        <Card.Title>{prod.nombre} - {prod.cantidad}</Card.Title>
-                                                        <Card.Title>unidades: {prod.cantidad}</Card.Title>
-                                                    </Card.Body>
-                                                </Card>
-                                            ))
-                                        }
-                                    </div>}
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+                                        {showProductos(p)}
+                                    </div>
                                 </Card.Body>
                             </Card>
                             : <></>
                     )
                     : <p>
-                        <h3>Disculpe, no hay pedidos actualmente!</h3>
+                        <h3>No hay pedidos del estado seleccionado actualmente.</h3>
                         <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                     </p>
                 }

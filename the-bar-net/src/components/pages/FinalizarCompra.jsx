@@ -31,8 +31,9 @@ export default function FinalizarCompra() {
     const [showModal, setShowModal] = useState(false);
     const [showPedidoRegistrado, setShowPedidoRegistrado] = useState(false);
     const history = useHistory();
+    const [preciosEnvio, setPreciosEnvio] = useState([]);
 
-    const handleFinalizarCompra = useCallback((user) => {
+    const handleFinalizarCompra = useCallback((userFinalizarCompra, cargoPorEnvio) => {
         setShowModal(false);
 
         let fechaActual = new Date();
@@ -40,14 +41,24 @@ export default function FinalizarCompra() {
         const time = fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds();
         fechaActual = date + ' ' + time;
 
+        const idsProducto = [];
+        productosCarrito.forEach(pc => {
+            for (let index = 0; index < pc.cantidad; index++) {
+                idsProducto.push((pc.p.id).toString());
+            }
+        });
         const pedido = {
-            idUsuario: actualUser.id,
+            idUsuario: user.id,
             fecha: fechaActual,
             total: carritoTotal,
             tipoEnvio: modalidadEnvioSeleccionada,
             modalidadPago: modalidadPagoSeleccionada,
             estado: modalidadPagoSeleccionada === 'efectivo' ? 'sin_pagar' : 'pagado'
         }
+        if (modalidadEnvioSeleccionada === 'envio') {
+            pedido.total += preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio;
+        }
+        console.log(pedido)
 
         fetch(TheBarNetServerUrl.pedido, {
             method: 'POST',
@@ -58,20 +69,35 @@ export default function FinalizarCompra() {
             body: JSON.stringify(pedido)
         }).then(res => res.json())
             .then(response => {
-                setPedido(pedido);
-                setShowPedidoRegistrado(true);
-                setCarrito([], 0);
-                setCarritoTotal(0);
-            });
+                console.log('ped', response)
+                pedido.id = response.idPedido;
+                fetch(TheBarNetServerUrl.addPedProd + response.idPedido, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors', // no-cors
+                    body: JSON.stringify({ idsProducto: idsProducto })
+                }).then(res => res.json())
+                    .then(response => {
+                        console.log('ped-prod', response)
+                        setPedido(pedido);
+                        setShowPedidoRegistrado(true);
+                        setCarrito([], 0);
+                        setCarritoTotal(0);
+                    })
+            })
+            .catch((e) => console.log(e));
 
         // alert(JSON.stringify(pedido))
         // setActualUser(user);
         // setCompleteUserData(true);
         // console.log('end', user)
 
-    }, [actualUser.id, carritoTotal, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, setCarrito, setCarritoTotal, setPedido]);
+    }, [actualUser.localidad, carritoTotal, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, preciosEnvio, productosCarrito, setCarrito, setCarritoTotal, setPedido, user.id]);
 
     const handleSaveuserData = useCallback((user) => {
+        setActualUser(user)
         setEligioModalidadEnvio(true);
         setShowModal(true)
     }, []);
@@ -93,6 +119,16 @@ export default function FinalizarCompra() {
                     console.log('token decoded', userProfile)
                     setActualUser(userProfile);
                     setUser(userProfile);
+                    fetch(TheBarNetServerUrl.preciosEnvios, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        mode: 'cors'
+                    }).then(res => res.json())
+                        .then(response => {
+                            setPreciosEnvio(response.rta);
+                        });
                 });
         }
     }, [productosCarrito, setUser, token]);
@@ -125,15 +161,27 @@ export default function FinalizarCompra() {
                     Modalidad de pago elegida: {' ' + (modalidadPago.find(mp => mp.id === modalidadPagoSeleccionada)).name}
                 </Card.Text>
                 {/* </>} */}
-                {eligioModalidadEnvio && <>
                     <hr />
                     <Card.Text>
                         Modalidad de envío elegida: {' ' + (modalidadEnvio.find(mE => mE.id === modalidadEnvioSeleccionada)).name}
+                    </Card.Text>
+                {modalidadEnvioSeleccionada === 'envio' && <>
+                    <Card.Text>
+                        Cargo por envío: {' $' + preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio}
                     </Card.Text>
                 </>}
             </Card.Body>
         </Card>
     )
+
+    // useEffect(() => {
+    //     const precio = preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio;
+    //     if (precio) {
+    //         setCargoEnvio(precio);
+    //     }
+    // }, [actualUser, preciosEnvio]);
+
+
     return (
         <div>
             <br /><h3 className="tittle-style">Finalizar Compra</h3><br />

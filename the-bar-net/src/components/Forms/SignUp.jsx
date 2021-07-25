@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import '../styles.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import { useHistory } from 'react-router';
-import { TheNetBar } from '../context/TheNetBarContext';
 import { TheBarNetServerUrl } from '../context/Url';
+import Select from 'react-select';
 
 const validateEmail = (mail) => {
     if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
@@ -16,8 +16,9 @@ const validateEmail = (mail) => {
 
 export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra, handleFinalizarCompra,
     showDatosEnvio = true, continuarDisabled = false, close, changeView }) {
-    // const { setIsLogged } = useContext(TheNetBar.Context);
 
+    const [preciosEnvio, setPreciosEnvio] = useState([]);
+    const [localidades, setLocalidades] = useState([]);
     const [type, setType] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
@@ -26,8 +27,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
     const [caracteristica, setCaracteristica] = useState("");
     const [telephone, setTelephone] = useState("");
     const [direccion, setDireccion] = useState("");
-    const [localidad, setLocalidad] = useState("");
-    const [provincia, setProvincia] = useState("");
+    const [localidad, setLocalidad] = useState({ value: 1, label: "CABA" });
+    const [provincia, setProvincia] = useState("Buenos Aires");
     const [cp, setCp] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -53,7 +54,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                 password: password,
                 telefono: caracteristica + telephone,
                 direccion: direccion,
-                localidad: localidad,
+                // localidad is precioEnvio id 
+                localidad: localidad.value,
                 provincia: provincia,
                 codigoPostal: cp,
                 confiable: confiable,
@@ -64,6 +66,9 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             // fetch 
             if (user) {
                 // PUT to update user
+                if (finalizarCompra) {
+                    userNew.tipo = 'cliente';
+                }
                 fetch(TheBarNetServerUrl.users + '/' + user.id, {
                     method: 'PUT',
                     headers: {
@@ -80,7 +85,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                         }
                     });
                 if (finalizarCompra) {
-                    handleFinalizarCompra({ ...userNew, tipo: 'cliente' });
+                    handleFinalizarCompra(userNew, preciosEnvio.find(pEnvio => pEnvio.id === localidad.value)?.precio);
                 }
             } else {
                 fetch(TheBarNetServerUrl.users, {
@@ -104,8 +109,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                                 //alert('creado')
                                 changeView();
                             }
-                        } else if (response.rta === "added") {
-                            setTryAgainText("Ese usuario ya se encuentra registrado en el sistema!");
+                        } else if (response.rta === "registered email") {
+                            setTryAgainText("Ese email ya se encuentra registrado en el sistema!");
                         } else {
                             setTryAgainText("Algo salió mal, por favor intente de nuevo!");
                         }
@@ -133,10 +138,10 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             setTelephone(value.target.value);
         } else if (value.target.name === "direccion") {
             setDireccion(value.target.value);
-        } else if (value.target.name === "localidad") {
-            setLocalidad(value.target.value);
-        } else if (value.target.name === "provincia") {
-            setProvincia(value.target.value);
+            // } else if (value.target.name === "localidad") {
+            //     setLocalidad(value.target.value);
+            // } else if (value.target.name === "provincia") {
+            // setProvincia(value.target.value);
         } else if (value.target.name === "cp") {
             setCp(value.target.value);
         } else if (value.target.name === "dni") {
@@ -148,6 +153,11 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
         }
     }, [adminMode, empleadoMode]);
 
+    const handleChangeLocalidad = useCallback((localidadItem) => {
+        console.log(localidadItem)
+        setLocalidad(localidadItem);
+    }, []);
+
     useEffect(() => {
         if (user) {
             setName(user.nombre);
@@ -157,7 +167,6 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             // setCaracteristica(user.caracteristica);
             setTelephone(user.telefono.toString());
             setDireccion(user.direccion);
-            setLocalidad(user.localidad);
             setProvincia(user.provincia);
             setCp(user.codigoPostal.toString());
             setEmail(user.email);
@@ -172,7 +181,30 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
             setSubmitDisabled(continuarDisabled);
             console.log(user)
         }
-    }, [continuarDisabled, user]);
+        fetch(TheBarNetServerUrl.preciosEnvios, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        }).then(res => res.json())
+            .then(response => {
+                setPreciosEnvio(response.rta);
+                const localidadesToSet = response.rta.map(l => ({
+                    value: l.id,
+                    label: l.localidad
+                }));
+                if (user) {
+                    if (finalizarCompra) {
+                        setLocalidad(localidadesToSet.find(l => l.value === Number.parseInt(user.localidad)));
+                    } else {
+                        setLocalidad(localidadesToSet.find(l => l.label === user.localidad));
+                    }
+                }
+                setLocalidades(localidadesToSet);
+            });
+
+    }, [continuarDisabled, finalizarCompra, user]);
 
     const validName = name.length > 1;
     const validSurname = surname.length > 1;
@@ -181,7 +213,8 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
     const validCaracteristica = user ? true : (caracteristica.length > 0 && caracteristica.length < 5);
     const validTelephone = telephone.length > 5 && telephone.length < 15;
     const validDireccion = direccion.length > 0;
-    const validLocalidad = localidad.length > 0;
+    // const validLocalidad = localidad.length > 0;
+    const validLocalidad = localidad !== '';
     const validProvincia = provincia.length > 0;
     const validCp = cp.length > 0 && cp.length < 5;
     const validPass = user ? true : password.length > 4;
@@ -265,13 +298,34 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                     </Form.Group>
                     <Form.Group>
                         <Form.Label className="login-form-tittles">Localidad</Form.Label>
-                        <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
-                            defaultValue={user ? localidad : ""} />
+                        {/* <Form.Control type="text" name="localidad" onChange={handleChange} isValid={validLocalidad}
+                            defaultValue={user ? localidad : ""} /> */}
+                        {/* <Form.Control as="select" onChange={handleChange} id="localidad" name="localidad"> */}
+                        {/* {localidades.map(l => (
+                                <option key={l.id} value={l.localidad}>{l.localidad}</option>
+
+                            ))} */}
+                        <Select
+                            value={localidad}
+                            options={localidades}
+                            onChange={handleChangeLocalidad}
+                            isSearchable
+                        />
+                        {
+                            finalizarCompra &&
+                            <Form.Text style={{ fontSize: 'larger' }}>
+                                Cargo por envío: {' $' + preciosEnvio.find(pEnvio => pEnvio.id === localidad.value)?.precio}
+                            </Form.Text>
+                        }
                     </Form.Group>
                     <Form.Group>
                         <Form.Label className="login-form-tittles">Provincia</Form.Label>
-                        <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia}
-                            defaultValue={user ? provincia : ""} />
+                        {/* <Form.Control type="text" name="provincia" onChange={handleChange} isValid={validProvincia} 
+                            // defaultValue={user ? provincia : ""} />*/}
+                        {/* defaultValue={"Buenos Aires"} disabled /> */}
+                        <Form.Control as="select" onChange={handleChange} id="provincia" name="provincia">
+                            <option key={1} value={'Buenos Aires'}>Buenos Aires</option>
+                        </Form.Control>
                     </Form.Group>
                     <br />
                     <Form.Group>
@@ -297,7 +351,7 @@ export default function SignUp({ adminMode, empleadoMode, user, finalizarCompra,
                             <option key='encargado' value='encargado'>Encargado</option>
                             <option key='empleado' value='empleado'>Empleado</option>
                             <option key='repartidor' value='repartidor'>Repartidor</option>
-                            <option key='usuario' value='usuario' defaultValue>Usuario</option>
+                            <option key='cliente' value='cliente' defaultValue>Cliente</option>
                         </Form.Control>
                     </Form.Group>
                 }

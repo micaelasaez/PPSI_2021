@@ -12,6 +12,7 @@ import { useHistory } from 'react-router-dom';
 import Stocks from '../Stocks';
 import AddPromoBanco from '../../Forms/AddPromoBanco';
 import BancosYPromos from '../BancosYPromos';
+import PedidosView from '../PedidosView';
 
 export default function EncargadoView() {
     const active = "products";
@@ -56,9 +57,11 @@ export default function EncargadoView() {
                         <AddCombos />
                     </>}
                 </Tab>
-                {/* <Tab eventKey="bancos-tarjetas" title="BANCOS Y TARJETAS">
-                    <h3>BANCOS Y TARJETAS</h3>
-                </Tab> */}
+                <Tab eventKey={'pedidos'} title="PEDIDOS">
+                    {(activeKey === 'pedidos') && <>
+                        <PedidosView />
+                    </>}
+                </Tab>
                 <Tab eventKey="promociones-bancarias" title="PROMOCIONES BANCARIAS">
                     {activeKey === 'promociones-bancarias' && <BancosYPromos />}
                 </Tab>

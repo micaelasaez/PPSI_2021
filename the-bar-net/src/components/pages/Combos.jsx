@@ -14,6 +14,7 @@ const modalStyle = {
 export default function Combos() {
     const { addCarrito } = useContext(TheNetBar.Context);
     const [combos, setCombos] = useState([]);
+    const [productos, setProductos] = useState([]);
     const [nombreCombo, setNombreCombo] = useState("");
     const [adminMode, setAdminMode] = useState(false);
     const { state } = useLocation();
@@ -120,8 +121,27 @@ export default function Combos() {
                 rta = rta.map(element => ({ ...element, productos: JSON.parse(element.productos) }));
                 console.log(rta)
                 setCombos(rta);
-            })
+                fetch(TheBarNetServerUrl.products, {
+                    mode: 'cors'
+                }).then(res => res.json())
+                    .then(response => {
+                        setProductos(response.rta);
+                    })
+            });
     }, [state]);
+
+    const showBorrar = useCallback((combo) => {
+        let showBorrar = true;
+        combo.productos.forEach(pCombo => {
+            if (productos.find(p => p.id === pCombo.idProducto) === undefined) {
+                showBorrar = false;
+            }
+        });
+        if (showBorrar) {
+            return <Button variant="danger" onClick={() => handleDeleteCombo(combo)}>BORRAR COMBO</Button>
+        }
+        return <div></div>
+    }, [productos]);
 
     return (
         <div>
@@ -129,7 +149,7 @@ export default function Combos() {
             {combos.length > 0
                 ? <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', alignItems: 'stretch' }}>
                     {combos.map(combo => (
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }} key={combo.id}>
                             <ProductCombo
                                 key={combo.id}
                                 combo={combo}
@@ -140,7 +160,8 @@ export default function Combos() {
                             {
                                 adminMode
                                     ? <div>
-                                        <Button variant="danger" onClick={() => handleDeleteCombo(combo)}>BORRAR COMBO</Button>
+                                        {productos.length > 0 && showBorrar(combo)}
+                                        {/* <Button variant="danger" onClick={() => handleDeleteCombo(combo)}>BORRAR COMBO</Button> */}
                                     </div>
                                     : <div>
                                         <h2 style={{

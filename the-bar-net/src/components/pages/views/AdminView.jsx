@@ -12,14 +12,16 @@ import Sucursal from '../../Sucursal';
 import BancosYPromos from '../BancosYPromos';
 import Categories from '../../Categories';
 import AddPrecioEnvio from '../../Forms/AddPrecioEnvio';
+import { useHistory } from 'react-router-dom';
 
 export default function AdminView() {
     const active = "products";
-    const [showUsuarios, setShowUsuarios] = useState(false);
+    const [showUsuarios, setShowUsuarios] = useState(true);
     const [activeKey, setActiveKey] = useState(active);
     const [disableSelect, setDisableSelect] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
     const [alertMsg, setAlertMsg] = useState('');
+    const history = useHistory();
 
     return (
         <div>
@@ -34,7 +36,14 @@ export default function AdminView() {
                     </>}
                 </Tab>
                 <Tab eventKey={active} title="BEBIDAS">
-                    {activeKey === active && <AddProduct />}
+                    {(activeKey === active) && <>
+                        <div style={{ marginTop: '50px' }}>
+                            <Button className="personalized-button" onClick={() => history.push({ pathname: "/productos", state: { adminMode: true } })}>
+                                VER BEBIDAS ACTUALES DEL SITIO
+                            </Button>
+                        </div>
+                        <AddProduct />
+                    </>}
                 </Tab>
                 <Tab eventKey="users" title="USUARIOS">
                     {activeKey === 'users' && <>
@@ -44,11 +53,13 @@ export default function AdminView() {
                         </Button>
                         {showUsuarios
                             ? <UsuariosList />
-                            : <SignUp adminMode={true} changeView={() => {
+                            : <SignUp adminMode={true}
+                                changeView={() => {
                                     setAlertMsg('Usuario creado!');
                                     setShowAlert(true);
                                     setShowUsuarios(true);
-                                }} />
+                                }}
+                            />
                         }
                     </>}
                 </Tab>

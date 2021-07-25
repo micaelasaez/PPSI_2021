@@ -4,7 +4,8 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
 import ShowUsuarios from '../../ShowUsuarios';
-import PedidosView from '../PedidosView';
+import PedidosViewEmpleado from '../PedidosViewEmpleado';
+import AddEnvio from '../../Forms/AddEnvio';
 
 export default function EmpleadoView() {
     const active = "pedidos";
@@ -16,15 +17,22 @@ export default function EmpleadoView() {
             <br />
             <h5 style={{ marginBottom: '25px' }}>EMPLEADO</h5>
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }} onSelect={(p) => setActiveKey(p)}>
-                <Tab eventKey={active} title="PEDIDOS">
+                <Tab eventKey={active} title="PEDIDOS PARA PREPARAR">
                     {(activeKey === active) && <>
-                        <PedidosView />
+                        <PedidosViewEmpleado />
                     </>}
                 </Tab>
-                <Tab eventKey="envios" title="ENVIOS">
-                    {(activeKey === "envios") &&
-                        <h3>ENVIOS</h3>}
+                <Tab eventKey="entrega-sucursal" title="ENTREGAS SUCURSAL">
+                    {(activeKey === "entrega-sucursal") && <>
+                        <PedidosViewEmpleado entregaSucursal />
+                    </>}
                 </Tab>
+                {/* <Tab eventKey="envios" title="ENVIOS">
+                    {(activeKey === "envios") && <>
+                        {/* <h3>ENVIOS</h3>
+                        <AddEnvio />
+                    </>
+                </Tab> */}
                 <Tab eventKey="users" title="CLIENTES">
                     {activeKey === 'users' && <>
                         <br />
