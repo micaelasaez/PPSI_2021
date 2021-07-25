@@ -141,10 +141,13 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                                             type="number" id="nuevoPrecio"
                                             placeholder='Ingrese nuevo Precio'
                                             onChange={handleChange}
-                                            isValid={nuevoPrecio > 0}
+                                            isValid={nuevoPrecio > 0 && nuevoPrecio < p.precio}
                                         />
                                     </InputGroup>
-                                    {nuevoPrecio > 0 && <p>Descuento total: ${p.precio - nuevoPrecio}</p>}
+                                    <Form.Text id="passwordHelpBlock" muted>
+                                        El precio de la oferta no puede ser mayor al precio de la bebida.
+                                    </Form.Text>
+                                    {nuevoPrecio > 0 && <p><br/>Descuento total: ${p.precio - nuevoPrecio}</p>}
                                 </Form.Group>
                                 <Form.Group controlId="fechaInicio">
                                     <Form.Label className="login-form-tittles">Fecha de Inicio Oferta</Form.Label>
@@ -162,7 +165,7 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                                 </Form.Group>
 
                                 <Button variant="dark" onClick={() => handleSubmitOferta(p, nuevoPrecio, fechaInicio, fechaFin)}
-                                    disabled={!(fechaFinValid && fechaInicioValid && nuevoPrecioValid)}>
+                                    disabled={!(fechaFinValid && fechaInicioValid && nuevoPrecioValid) || nuevoPrecio > p.precio}>
                                     GUARDAR OFERTA
                                 </Button>
                             </>

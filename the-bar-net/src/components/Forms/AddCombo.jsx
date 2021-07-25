@@ -232,9 +232,12 @@ export default function AddCombos() {
                                         placeholder='Ingrese nuevo Precio'
                                         value={nuevoPrecio}
                                         onChange={handleChange}
-                                        isValid={nuevoPrecio > 0}
+                                        isValid={nuevoPrecio > 0 && nuevoPrecio < totalCombo}
                                     />
                                 </InputGroup>
+                                <Form.Text id="passwordHelpBlock" muted>
+                                    El precio del combo no puede ser mayor al precio total del combo.
+                                </Form.Text>
                                 {nuevoPrecio > 0 && <p>Descuento total: ${totalCombo - nuevoPrecio}</p>}
                             </Form.Group>
                             <br /><br />
@@ -258,7 +261,12 @@ export default function AddCombos() {
                                 <Button
                                     className="personalized-button"
                                     onClick={handleSaveCombo}
-                                    disabled={productosCombo.length < 1 || nuevoPrecio < 0 || fechaFin === fechaInicio || fechaFin === ''}
+                                    disabled={productosCombo.length < 1
+                                        || nuevoPrecio < 0
+                                        || fechaFin === fechaInicio
+                                        || fechaFin === ''
+                                        || nuevoPrecio > totalCombo
+                                    }
                                 >
                                     GUARDAR COMBO
                                 </Button>
