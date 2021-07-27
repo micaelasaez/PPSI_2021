@@ -32,6 +32,7 @@ const descuentos = [
 ];
 
 export default function FinalizarCompra() {
+    const todayDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
     const { productosCarrito, user, carritoTotal, token, setUser, setPedido, setCarrito, setCarritoTotal } = useContext(TheNetBar.Context);
     const [actualUser, setActualUser] = useState(user);
     const [cardCompleted, setCardCompleted] = useState(false);
@@ -43,6 +44,7 @@ export default function FinalizarCompra() {
     const [showPedidoRegistrado, setShowPedidoRegistrado] = useState(false);
     const history = useHistory();
     const [preciosEnvio, setPreciosEnvio] = useState([]);
+    const [ofertas, setOfertas] = useState([]);
     const [descuentoBancario, setDescuentoBancario] = useState(0);
     const [totalReal, setTotalReal] = useState(0);
 
@@ -64,6 +66,9 @@ export default function FinalizarCompra() {
                             idsProducto.push((pcProds.idProducto).toString());
                         }
                     });
+                } else if (pc.p.nuevoPrecio) {
+                    const idProd = ofertas.find(o => o.id === pc.p.id).idProducto;
+                    idsProducto.push((idProd).toString());
                 } else {
                     idsProducto.push((pc.p.id).toString());
                 }
@@ -71,6 +76,7 @@ export default function FinalizarCompra() {
         });
 
         console.log(productosCarrito)
+        console.log(idsProducto)
 
         const pedido = {
             idUsuario: user.id,
@@ -115,7 +121,7 @@ export default function FinalizarCompra() {
             .catch((e) =>
                 console.log(e)
             );
-    }, [modalidadEnvioSeleccionada, modalidadPagoSeleccionada, productosCarrito, setCarrito, setCarritoTotal, setPedido, totalReal, user.id]);
+    }, [modalidadEnvioSeleccionada, ofertas, modalidadPagoSeleccionada, productosCarrito, setCarrito, setCarritoTotal, setPedido, totalReal, user.id]);
 
     const handleSaveuserData = useCallback((user) => {
         setActualUser(user)
@@ -149,6 +155,19 @@ export default function FinalizarCompra() {
                     }).then(res => res.json())
                         .then(response => {
                             setPreciosEnvio(response.rta);
+                            fetch(TheBarNetServerUrl.ofertas, {
+                                mode: 'cors'
+                            }).then(res => res.json())
+                                .then(response => {
+                                    // console.log('ofertas', response.rta)
+                                    // console.log('nuevo', 
+                                    const ofertasVigentes = (response.rta.filter(element => {
+                                        let a = (new Date(element.fechaFin))
+                                        let b = (new Date(todayDate))
+                                        return a > b;
+                                    }));
+                                    setOfertas(ofertasVigentes);
+                                })
                         });
                 });
         }

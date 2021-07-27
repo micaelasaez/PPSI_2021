@@ -243,7 +243,7 @@ export default function AddProduct() {
                     </Button>
                 </Form>
                 <br /><br /><br />
-                <Modal show={showAlert} onHide={() => setShowAlert(false)}>
+                <Modal show={showAlert} onHide={() => { setShowAlert(false); }}>
                     <Modal.Header closeButton>
                         <Modal.Title>Aviso</Modal.Title>
                     </Modal.Header>
@@ -251,7 +251,7 @@ export default function AddProduct() {
                         <p>{alertMsg}</p>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={() => setShowAlert(false)}>
+                        <Button variant="primary" onClick={() => { setShowAlert(false); }}>
                             Aceptar
                         </Button>
                     </Modal.Footer>

@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import '../styles.css';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { TheBarNetServerUrl } from '../context/Url';
 import { modalidadPago } from '../pages/FinalizarCompra';
+import { TheNetBar } from '../context/TheNetBarContext';
 
 const styles = {
     product: {
@@ -56,6 +57,9 @@ export default function ShowEntregados() {
     const time = fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds();
     const todayDate = date + ' ' + time;
 
+    const { token } = useContext(TheNetBar.Context);
+    const [user, setUser] = useState({});
+
     const [envios, setEnvios] = useState([]);
     const [enviosToday, setEnviosToday] = useState([]);
 
@@ -98,6 +102,26 @@ export default function ShowEntregados() {
     }, []);
 
     useEffect(() => {
+        if (token !== "") {
+            fetch(TheBarNetServerUrl.verifyToken, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors', // no-cors
+                body: JSON.stringify({
+                    token: token
+                })
+            }).then(res => res.json())
+                .then(response => {
+                    const userProfile = response.rta;
+                    console.log(userProfile);
+                    setUser(userProfile);
+                });
+        }
+    }, [token]);
+
+    useEffect(() => {
         fetch(TheBarNetServerUrl.envios, {
             mode: 'cors'
         }).then(res => res.json())
@@ -111,25 +135,48 @@ export default function ShowEntregados() {
                         }).then(res => res.json())
                             .then(response => {
                                 const pedido = response.rta;
-                                fetch(TheBarNetServerUrl.users + `/${envio.idUsuario}`, {
+                                let prodsToShow = [];
+                                fetch(TheBarNetServerUrl.productoPedido + `/${envio.idPedido}`, {
                                     mode: 'cors'
-                                }).then(res => res.json())
+                                })
+                                    .then(res => res.json())
                                     .then(response => {
-                                        const usuario = response.rta;
-                                        const pedidoDate = (envio.entregado).split(' ');
-                                        if (pedidoDate[0] === date) {
-                                            setEnviosToday(e => [...e, {
-                                                ...envio,
-                                                pedido: pedido[0],
-                                                usuario: usuario[0]
-                                            }]);
-                                        } else {
-                                            setEnvios(e => [...e, {
-                                                ...envio,
-                                                pedido: pedido[0],
-                                                usuario: usuario[0]
-                                            }]);
+                                        if (response.rta.length > 0) {
+                                            const productos = response.rta.map(r => r[0]);
+                                            productos.forEach(prod => {
+                                                const index = prodsToShow.findIndex(pts => pts.prod.fotos === prod.fotos);
+                                                if (index !== -1) {
+                                                    prodsToShow[index].cantidad++;
+                                                } else {
+                                                    prodsToShow.push({
+                                                        prod: prod,
+                                                        cantidad: 1
+                                                    });
+                                                }
+                                            });
                                         }
+                                        fetch(TheBarNetServerUrl.users + `/${envio.idUsuario}`, {
+                                            mode: 'cors'
+                                        }).then(res => res.json())
+                                            .then(response => {
+                                                const usuario = response.rta;
+                                                const pedidoDate = (envio.entregado).split(' ');
+                                                if (pedidoDate[0] === date) {
+                                                    setEnviosToday(e => [...e, {
+                                                        ...envio,
+                                                        pedido: pedido[0],
+                                                        usuario: usuario[0],
+                                                        productos: prodsToShow
+                                                    }]);
+                                                } else {
+                                                    setEnvios(e => [...e, {
+                                                        ...envio,
+                                                        pedido: pedido[0],
+                                                        usuario: usuario[0],
+                                                        productos: prodsToShow
+                                                    }]);
+                                                }
+                                            })
                                     })
                             })
                     }
@@ -168,29 +215,55 @@ export default function ShowEntregados() {
                             <span>{envio.pedido.fecha}</span>
                         </div> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span>Fecha entregado:</span>
-                            <span>{envio.entregado}</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span>Modalidad de Pago:</span>
                             <span>{(modalidadPago.find(m => m.id === envio.pedido.modalidadPago))?.name}</span>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>Fecha entregado:</span>
+                            <span>{envio.entregado}</span>
+                        </div>
+                        {user !== null &&
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Entregado por:</span>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span>{`${user.nombre} ${user.apellido}`}</span>
+                                    <span>{`DNI: ${user.dni}`}</span>
+                                    <span>{`CUIT: ${user.cuit}`}</span>
+                                </div>
+                            </div>
+                        }
+                        <br />
                     </div>
-                   {/*  <br />
+                    {/*  <br />
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
                         <Button variant='dark' onClick={() => showProductos(envio.idPedido)} size='sm'>
                             VER PRODUCTOS DEL PEDIDO
                         </Button>
                     </div> 
                     <br />*/}
+                    {envio.productos.length > 0 &&
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+                            {envio.productos.map(p => (
+                                <Card style={{ width: '20rem', height: 'fit-content', marginTop: '10px' }} key={p.fecha}>
+                                    <Card.Img variant="top" src={p.prod.fotos}
+                                        style={{ width: '5rem', height: '5rem', margin: "auto" }} />
+                                    <Card.Body>
+                                        <Card.Title>{p.prod.nombre} - {p.prod.cantidad}</Card.Title>
+                                        <Card.Title>Cant. unidades: {p.cantidad}</Card.Title>
+                                        <Card.Title>Precio unitario: ${p.prod.precio}</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            ))}
+                        </div>
+                    }
                     {envio.pedido.modalidadPago === 'efectivo'
-                        && <h4>Se cobró al cliente ${envio.precio}</h4>
+                        && <h4 style={{ marginTop: '25px' }}>Se cobró al cliente ${envio.precio}</h4>
                     }
                     <br />
                 </Card.Body>
             </Card>
         });
-    }, [showProductos]);
+    }, [user]);
 
     return (
         <div>
@@ -239,7 +312,7 @@ export default function ShowEntregados() {
                 </Modal.Header>
                 <Modal.Body>
                     <p>{alertMsg}</p>
-                    {prodsToShow.length > 0 &&
+                    {/* {prodsToShow.length > 0 &&
                         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
                             {prodsToShow.map(p => (
                                 <Card style={{ width: '20rem', height: 'fit-content', marginTop: '10px' }} key={p.fecha}>
@@ -252,7 +325,7 @@ export default function ShowEntregados() {
                                     </Card.Body>
                                 </Card>
                             ))}
-                        </div>}
+                        </div>} */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={() => { setShowAlert(false); setProdsToShow([]) }}>

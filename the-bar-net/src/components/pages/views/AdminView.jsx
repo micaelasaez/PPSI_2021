@@ -43,7 +43,7 @@ export default function AdminView() {
                     {(activeKey === active) && <>
                         <div style={{ marginTop: '50px' }}>
                             <Button className="personalized-button" onClick={() => history.push({ pathname: "/productos", state: { adminMode: true } })}>
-                                VER BEBIDAS ACTUALES DEL SITIO
+                                VER Y EDITAR BEBIDAS ACTUALES DEL SITIO
                             </Button>
                         </div>
                         <AddProduct />

@@ -266,6 +266,7 @@ export default function AddCombos() {
                                         || fechaFin === fechaInicio
                                         || fechaFin === ''
                                         || nuevoPrecio > totalCombo
+                                        || (productosCombo.length === 1 && productosCombo[0].cantidad < 2)
                                     }
                                 >
                                     GUARDAR COMBO

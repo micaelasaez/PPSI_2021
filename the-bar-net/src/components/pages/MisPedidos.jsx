@@ -62,7 +62,7 @@ export const MisPedidos = () => {
             .then(response => {
                 if (response.rta.length > 0) {
                     const productos = response.rta.map(r => r[0]);
-                    // console.log(productos);
+                    console.log(productos);
                     const prodsToShow = [];
                     productos.forEach(prod => {
                         const index = prodsToShow.findIndex(pts => pts.prod.fotos === prod.fotos);
@@ -121,15 +121,20 @@ export const MisPedidos = () => {
                 <hr />
             </Card.Body>
             <Card.Text>
-                <Button variant='danger' onClick={() => handleCancele(pedido)} size='sm'>
-                    <div>CANCELAR PEDIDO</div>
-                    <Figure.Image
-                        width={20}
-                        height={20}
-                        alt="171x180"
-                        src={deleteIcon}
-                    />
-                </Button>
+                {(pedido.estado === 'sin_pagar' ||
+                    pedido.estado === 'pagado' ||
+                    pedido.estado === 'a_entregar' ||
+                    pedido.estado === 'a_enviar') &&
+                    <Button variant='danger' onClick={() => handleCancele(pedido)} size='sm'>
+                        <div>CANCELAR PEDIDO</div>
+                        <Figure.Image
+                            width={20}
+                            height={20}
+                            alt="171x180"
+                            src={deleteIcon}
+                        />
+                    </Button>
+                }
             </Card.Text>
             <br />
         </Card>
