@@ -154,7 +154,7 @@ export default function Combos() {
                                 key={combo.id}
                                 combo={combo}
                                 setNombreCombo={setNombreCombo}
-                                editMode
+                                editMode={adminMode}
                                 handleUpdateCombo={handleUpdateCombo}
                             />
                             {
@@ -172,7 +172,7 @@ export default function Combos() {
                                         }}>
                                             Precio Total ${' ' + combo.precio}
                                         </h2>
-                                        <Button variant="info" onClick={() => addCarritoLocal(combo)}>AGREGAR AL CARRITO</Button>
+                                        <Button variant="success" onClick={() => addCarritoLocal(combo)}>AGREGAR AL CARRITO</Button>
                                     </div>
                             }
                             <br /><br /><br />

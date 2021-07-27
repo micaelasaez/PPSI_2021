@@ -5,25 +5,37 @@ import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
 import UsuariosList from '../UsuariosList';
 import AddProduct from '../../Forms/AddProduct';
-import AddCatergory from '../../Forms/AddCatergory';
 import AddOfertas from '../../Forms/AddOfertas';
 import AddCombos from '../../Forms/AddCombo';
 import { useHistory } from 'react-router-dom';
 import Stocks from '../Stocks';
-import AddPromoBanco from '../../Forms/AddPromoBanco';
 import BancosYPromos from '../BancosYPromos';
 import PedidosView from '../PedidosView';
+import AddCatergory from '../../Forms/AddCatergory';
+import Categories from '../../Categories';
 
 export default function EncargadoView() {
     const active = "products";
     const history = useHistory();
     const [activeKey, setActiveKey] = useState(active);
+    const [disableSelect, setDisableSelect] = useState(true);
 
     return (
         <div>
             <br />
             <h5 style={{ marginBottom: '25px' }}>ENCARGADO</h5>
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white', fontWeight: 500 }} onSelect={(p) => setActiveKey(p)}>
+                <Tab eventKey="categorias" title="CATEGORIAS">
+                    {activeKey === 'categorias' && <>
+                        <AddCatergory updateCategorias={() => {
+                            setDisableSelect(false);
+                            setDisableSelect(true);
+                        }}
+                        />
+                        <h4>CATEGORÍAS DISPONIBLES</h4>
+                        <Categories disableSelect={disableSelect} />
+                    </>}
+                </Tab>
                 <Tab eventKey={active} title="BEBIDAS">
                     {(activeKey === active) && <>
                         <div style={{ marginTop: '50px' }}>

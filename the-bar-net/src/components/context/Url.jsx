@@ -11,7 +11,7 @@ export const TheBarNetServerUrl = {
     addPedProd: baseURL + '/pedidos/pedprod/',
     productoPedido: baseURL + '/pedidos/prod',
     pedidosUsuario: baseURL + '/pedidos/user/',
-    category: baseURL + '/categorias/',
+    categoryPhoto: baseURL + '/categorias/upload/',
     ofertas: baseURL + '/ofertas/',
     combos: baseURL + '/combos/',
     sucursal: baseURL + '/sucursal',
@@ -19,5 +19,7 @@ export const TheBarNetServerUrl = {
     bancos: baseURL + '/bancos',
     preciosEnvios: baseURL + '/precioenvios',
     envios: baseURL + '/envios',
-    enviosEntrega: baseURL + '/envios/entrega'
+    enviosEntrega: baseURL + '/envios/entrega',
+    tarjetas: baseURL + '/tarjetas',
+    categorias: baseURL +'/categorias'
 };

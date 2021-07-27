@@ -71,9 +71,10 @@ class TheNetBarProvider extends Component {
                     console.log('loggued user', user);
                     this.setState({ ...this.state, isLogged: true, productosCarrito, carritoTotal, token, user });
                 });
-        } else {
-            localStorage.clear();
-        }
+        } 
+        // else {
+        //     localStorage.clear();
+        // }
     }
 
     // funcs

@@ -19,6 +19,7 @@ import Carrito from './components/pages/Carrito';
 import { MisPedidos } from './components/pages/MisPedidos';
 import FinalizarCompra from './components/pages/FinalizarCompra';
 import Stocks from './components/pages/Stocks';
+import { Footer } from './components/Footer';
 
 function App() {
 
@@ -88,6 +89,7 @@ function App() {
           <Redirect from="*" to="/not-found" />
         </Route>
       </Switch>
+      <Footer />
     </div>
   );
 }

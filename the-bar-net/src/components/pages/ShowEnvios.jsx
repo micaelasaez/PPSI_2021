@@ -177,7 +177,7 @@ export default function ShowEnvios() {
 
     return (
         <div>
-            <h1 className="tittle-style" style={styles.title}>PEDIDOS PREPARADOS LISTOS PARA ENVIAR</h1>
+            <h1 className="tittle-style" style={styles.title}>PEDIDOS SIENDO ENVIADOS</h1>
             <div style={styles.product}>
                 {envios.length > 0
                     ? envios.map(envio =>
@@ -191,6 +191,14 @@ export default function ShowEnvios() {
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span>Cliente:</span>
                                         <span>{`${envio.usuario.nombre} ${envio.usuario.apellido}`}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>Direccion:</span>
+                                        <span>{envio.direccion}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>CP:</span>
+                                        <span>{envio.codigoPostal}</span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span>Fecha pedido:</span>
@@ -215,7 +223,10 @@ export default function ShowEnvios() {
                                 }
                                 <br />
                                 <Button variant="success" onClick={() => handleUpdateEnvioEntregado(envio.id)} >
-                                    MARCAR COMO ENTREGADO
+                                    {envio.pedido.modalidadPago === 'efectivo'
+                                        ? 'MARCAR COMO ENTREGADO Y COBRADO'
+                                        : 'MARCAR COMO ENTREGADO'
+                                    }
                                 </Button>
                             </Card.Body>
                         </Card>

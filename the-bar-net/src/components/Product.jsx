@@ -63,7 +63,7 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                             ${' ' + p.nuevoPrecio}
                             <br />
                             <br />
-                            <p style={{ color: '#4c2882' }}>Descuento total: ${p.precio - p.nuevoPrecio}</p>
+                            {adminMode && <p style={{ color: '#4c2882' }}>Descuento total: ${p.precio - p.nuevoPrecio}</p>}
                         </>
                         : <> ${' ' + p.precio} </>
                     }

@@ -2,17 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import '../styles.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { TheBarNetServerUrl } from '../context/Url';
 
-const categories = [
-    { name: 'cervezas', title: 'Cervezas' },
-    { name: 'vinos', title: 'Vinos' },
-    { name: 'espumantes', title: 'Espumantes' },
-    { name: 'vodka', title: 'Vodkas' },
-    { name: 'whiskys', title: 'Whiskys' },
-    { name: 'sin-alcohol', title: 'Sin Alcohol' }
-];
+// const categories = [
+//     { name: 'cervezas', title: 'Cervezas' },
+//     { name: 'vinos', title: 'Vinos' },
+//     { name: 'espumantes', title: 'Espumantes' },
+//     { name: 'vodka', title: 'Vodkas' },
+//     { name: 'whiskys', title: 'Whiskys' },
+//     { name: 'sin-alcohol', title: 'Sin Alcohol' }
+// ];
 const quantityTypes = [
     { key: "ml", type: "Mili Litros" },
     { key: "l", type: "Litro" },
@@ -21,10 +22,12 @@ const quantityTypes = [
     { key: "24u", type: "Caja 24 unidades" }
 ];
 
-export default function AddCatergory() {
+export default function AddCatergory({ updateCategorias }) {
     const [name, setName] = useState("");
     const [photo, setPhoto] = useState(null);
     const [submitDisabled, setSubmitDisabled] = useState(true);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMsg, setAlertMsg] = useState('');
 
     const handleSubmit = useCallback(() => {
         const category = {
@@ -32,28 +35,49 @@ export default function AddCatergory() {
             foto: photo
         };
         console.log(category);
-        // fetch(TheBarNetServerUrl.category, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     mode: 'cors', // no-cors
-        //     body: JSON.stringify(category)
-        // })
-        //     .then(res => res.json())
-        //     .catch(error => console.error('Error:', error))
-        //     .then(response => {
-        //         console.log(response);
-        //         // if todo ok 
-        //         // alert('creado')
-        //         // else
-        //         // alert('algo fallo', response.mensaje)
-        //     });
-    }, [name, photo]);
+        fetch(TheBarNetServerUrl.categorias, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors', // no-cors
+            body: JSON.stringify({
+                nombre: name
+            })
+        })
+            .then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                console.log(response);
+                const formData = new FormData();
+                formData.append('photo', photo);
+                fetch(TheBarNetServerUrl.categoryPhoto + response.idCategoria, {
+                    method: 'POST',
+                    mode: 'cors', // no-cors
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        console.log('response 2', response);
+                        if (response.rta === "added") {
+                            setAlertMsg('Categoría agregada correctamente.');
+                            setShowAlert(true);
+                            updateCategorias();
+                        } else {
+                            setAlertMsg('Algo falló agregando la categoría.');
+                            setShowAlert(true);
+                        }
+                        setName("");
+                        setPhoto(null);
+                    })
+            })
+            .catch(err => console.log(err));
+
+    }, [name, photo, updateCategorias]);
 
     const handleChange = useCallback((value) => {
         if (value.target.id === "photo") {
-            return setPhoto(URL.createObjectURL(value.target.files[0]))
+            return setPhoto(value.target.files[0]);
         }
         switch (value.target.id) {
             case "name":
@@ -84,9 +108,9 @@ export default function AddCatergory() {
                     <Form.Group key={'photo'}>
                         {/* <Form.File id={item.id} label={item.label} onChange={handleChange} /> */}
                         <div style={{ display: 'flex', margin: 'auto', justifyContent: "space-around" }}>
-                            <input type="file" id={'photo'} onChange={handleChange} />
+                            <input type="file" id="photo" onChange={handleChange} accept="image/*" name="photo" />
                             {photo !== null && <div>
-                                <img src={photo} alt="" style={{ height: "120px", width: "120px", marginTop: "5px" }} />
+                                <img src={URL.createObjectURL(photo)} alt="" style={{ height: "120px", width: "120px", marginTop: "5px" }} />
                             </div>}
                         </div>
                     </Form.Group>
@@ -101,6 +125,19 @@ export default function AddCatergory() {
                     </Button>
                 </Form>
                 <br /><br /><br />
+                <Modal show={showAlert} onHide={() => setShowAlert(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Aviso</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>{alertMsg}</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={() => setShowAlert(false)}>
+                            Aceptar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         </>
     )

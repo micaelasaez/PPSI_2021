@@ -184,7 +184,7 @@ export default function PedidosViewEmpleado({ entregaSucursal = false }) {
                                 {entregaSucursal
                                     ? (
                                         <div>
-                                            {p.modalidadPago === 'efectivo' 
+                                            {p.modalidadPago === 'efectivo'
                                                 ? <h2>Cobrar al cliente ${p.total}</h2>
                                                 : <h6>El pago del pedido ya fue efectuado correctamente!</h6>
                                             }
@@ -194,10 +194,15 @@ export default function PedidosViewEmpleado({ entregaSucursal = false }) {
                                             </Button>
                                         </div>
                                     )
-                                    : (
-                                        <Button variant="success" onClick={() => handleUpdateEstado(p.id, 'a_entregar')} >
+                                    : (<>
+                                        <Button variant="success" onClick={() => handleUpdateEstado(p.id, 'a_entregar')} size={"lg"} >
                                             MARCAR COMO PREPARADO
                                         </Button>
+                                        <br /><br />
+                                        <Button variant="danger" onClick={() => handleUpdateEstado(p.id, 'rechazado')} >
+                                            RECHAZAR PEDIDO
+                                        </Button>
+                                    </>
                                     )}
                             </Card.Body>
                         </Card>

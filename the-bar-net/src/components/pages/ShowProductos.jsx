@@ -20,7 +20,7 @@ const styles = {
 export default function ShowProductos() {
     const { addCarrito } = useContext(TheNetBar.Context);
     const { state } = useLocation();
-    const { title, name } = state;
+    const { categoryId, title } = state;
     const [products, setProducts] = useState([]);
 
     const addCarritoLocal = (p, cantidad) => {
@@ -29,14 +29,14 @@ export default function ShowProductos() {
     }
 
     useEffect(() => {
-        fetch(TheBarNetServerUrl.products + '/category/' + name, {
+        fetch(TheBarNetServerUrl.products + '/category/' + categoryId, {
             mode: 'cors'
         }).then(res => res.json())
         .then(response => {
             console.log(response);
             setProducts(response.rta)
         })
-    }, [name]);
+    }, [categoryId]);
     
     /* ejemplo producto
     StockMax: 53
@@ -55,17 +55,13 @@ export default function ShowProductos() {
                 {products.length > 0 
                     ? products.map(p => (
                         p.stockActual > 0 && <Product addCarrito={addCarritoLocal} p={p}/>
-                        //oldPrice
                     ))
                     : <p>
                         <h3>Disculpe, no hay productos de esa categoría actualmente!</h3>
-                        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                     </p>
                 }
-                {/* <Product title="Name" price='$800' oldPrice={undefined} addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='1'/>
-                <Product title="Name" price='$800' oldPrice='$900' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='2'/>
-                <Product title="Name" price='$800' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='3'/>
-                <Product title="Name" price='$752' addCarrito={()=> addCarrito({title: 'Name', price: '300'})} id='4'/> */}
+                <br /><br /><br /><br /><br /><br /><br /><br />
             </div>
         </div>
     )

@@ -23,6 +23,7 @@ const styles = {
 export default function AddEnvio() {
     const [pedidos, setPedidos] = useState([]);
     const [pedidosToShow, setPedidosToShow] = useState([]);
+    const [localidades, setLocalidades] = useState([]);
 
     const [showAlert, setShowAlert] = useState(false);
     const [alertMsg, setAlertMsg] = useState('');
@@ -33,6 +34,12 @@ export default function AddEnvio() {
         }).then(res => res.json())
             .then(response => {
                 setPedidos(response.rta);
+                fetch(TheBarNetServerUrl.preciosEnvios, {
+                    mode: 'cors'
+                }).then(res => res.json())
+                    .then(response => {
+                        setLocalidades(response.rta);
+                    });
             })
     }, []);
 
@@ -91,9 +98,10 @@ export default function AddEnvio() {
     const handleCreateEnvio = useCallback((idPedido) => {
         const pedidoAEnviar = pedidosToShow.find(p => p.id === idPedido);
         console.log('listo para enviar', pedidoAEnviar);
-        const idPEnvio = 1;
         // idUsuario, idPedido, idPrecioEnvio, precio, fecha, direccion, codigoPostal, entregado
+        const localidad = localidades.find(l => l.id === Number.parseInt(pedidoAEnviar.usuario.localidad));
 
+        console.log('precio envio', localidad)
         fetch(TheBarNetServerUrl.envios, {
             method: 'POST',
             headers: {
@@ -103,10 +111,10 @@ export default function AddEnvio() {
             body: JSON.stringify({
                 idUsuario: pedidoAEnviar.idUsuario,
                 idPedido: pedidoAEnviar.id,
-                idPrecioEnvio: idPEnvio,
+                idPrecioEnvio: localidad ? localidad.id : 1,
                 precio: pedidoAEnviar.total,
                 // fecha: '',
-                direccion: pedidoAEnviar.usuario.direccion + ', ' + pedidoAEnviar.usuario.localidad,
+                direccion: localidad ? pedidoAEnviar.usuario.direccion + ', ' + localidad.localidad : pedidoAEnviar.usuario.direccion,
                 codigoPostal: pedidoAEnviar.usuario.codigoPostal,
                 // entregado: 'no'
             })
@@ -138,7 +146,7 @@ export default function AddEnvio() {
                 setAlertMsg('Algo falló creando el envío!');
                 setShowAlert(true);
             });
-    }, [pedidosToShow]);
+    }, [localidades, pedidosToShow]);
 
     const showProductos = (p) => {
         const prodsToShow = [];
@@ -201,7 +209,7 @@ export default function AddEnvio() {
                                 </div>
                                 <br />
                                 <Button variant="success" onClick={() => handleCreateEnvio(p.id)} >
-                                    CREAR ENVÍO PARA REPARTIDOR
+                                    CREAR ENVÍO
                                 </Button>
                             </Card.Body>
                         </Card>

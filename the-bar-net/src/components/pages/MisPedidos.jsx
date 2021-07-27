@@ -178,6 +178,7 @@ export const MisPedidos = () => {
                 {(Array.isArray(pedidos) && pedidos.length > 1) &&
                     <div style={{ width: '60%' }}>
                         <p><b>Los pedidos con modalidad de envío a domicilio sólo se pueden cancelar antes de que sean enviados.</b></p>
+                        <h4>Historial de pedidos realizados</h4>
                         <Table responsive>
                             <thead>
                                 <tr>
@@ -190,51 +191,50 @@ export const MisPedidos = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {(Array.isArray(pedidos) && pedidos.length > 0)
-                                    && pedidos.map((value, index) => {
-                                        if (pedido.idUsuario) {
-                                            return <></>;
-                                        }
-                                        if (index === pedidos.length -1) {
-                                            return <></>;
-                                        }
-                                        return <tr key={value.id} className="table-row">
-                                            <td onClick={() => showProdsPed(value)}>
-                                                {value.fecha}
-                                            </td>
-                                            <td onClick={() => showProdsPed(value)}>
-                                                ${value.total}
-                                            </td>
-                                            <td onClick={() => showProdsPed(value)}>
-                                                {(modalidadEnvio.find(mEnvio => mEnvio.id === value.tipoEnvio)).name}
-                                            </td>
-                                            <td onClick={() => showProdsPed(value)}>
-                                                {(modalidadPago.find(mPago => mPago.id === value.modalidadPago)).name}
-                                            </td>
-                                            <td onClick={() => showProdsPed(value)}>
-                                                {(estadosPedido.find(e => e.key === value.estado)).title}
-                                            </td>
-                                            <td>
-                                                {
-                                                    (value.estado === 'sin_pagar' ||
-                                                        value.estado === 'pagado' ||
-                                                        value.estado === 'a_entregar' ||
-                                                        value.estado === 'a_enviar') && (
-                                                        <Button variant='danger' onClick={() => handleCancele(value)} size='sm'>
-                                                            <div>CANCELAR</div>
-                                                            <Figure.Image
-                                                                width={20}
-                                                                height={20}
-                                                                alt="171x180"
-                                                                src={deleteIcon}
-                                                            />
-                                                        </Button>
-                                                    )
-                                                }
-                                            </td>
-                                        </tr>
-                                    })
-                                }
+                                {pedidos.map((value, index) => {
+                                    console.log(index, pedidos.length, pedido)
+                                    if (pedido.idUsuario && value.id === pedido.id) {
+                                        return <></>;
+                                    }
+                                    if (index === pedidos.length - 1) {
+                                        return <></>;
+                                    }
+                                    return <tr key={value.id} className="table-row">
+                                        <td onClick={() => showProdsPed(value)}>
+                                            {value.fecha}
+                                        </td>
+                                        <td onClick={() => showProdsPed(value)}>
+                                            ${value.total}
+                                        </td>
+                                        <td onClick={() => showProdsPed(value)}>
+                                            {(modalidadEnvio.find(mEnvio => mEnvio.id === value.tipoEnvio)).name}
+                                        </td>
+                                        <td onClick={() => showProdsPed(value)}>
+                                            {(modalidadPago.find(mPago => mPago.id === value.modalidadPago)).name}
+                                        </td>
+                                        <td onClick={() => showProdsPed(value)}>
+                                            {(estadosPedido.find(e => e.key === value.estado)).title}
+                                        </td>
+                                        <td>
+                                            {
+                                                (value.estado === 'sin_pagar' ||
+                                                    value.estado === 'pagado' ||
+                                                    value.estado === 'a_entregar' ||
+                                                    value.estado === 'a_enviar') && (
+                                                    <Button variant='danger' onClick={() => handleCancele(value)} size='sm'>
+                                                        <div>CANCELAR</div>
+                                                        <Figure.Image
+                                                            width={20}
+                                                            height={20}
+                                                            alt="171x180"
+                                                            src={deleteIcon}
+                                                        />
+                                                    </Button>
+                                                )
+                                            }
+                                        </td>
+                                    </tr>
+                                })}
                             </tbody>
                         </Table>
                     </div>

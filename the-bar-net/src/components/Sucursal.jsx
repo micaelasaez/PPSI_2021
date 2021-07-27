@@ -107,9 +107,9 @@ export default function Sucursal({ adminMode = false }) {
                             <br />
                         </Card.Body>
                     </Card>
-                    : <div style={{ width: '100%', textAlign: 'center', margin: '0 125px' }}>
-                        <h5>DÓNDE ESTAMOS</h5>
-                        <h5>{`${sucursal.direccion}  -  Horarios de atención: ${sucursal.horarios}`}</h5>
+                    : <div style={{ width: '100%', textAlign: 'center', margin: '0 114px' }}>
+                        <h5>¿DÓNDE ESTAMOS?</h5>
+                        <h5 style={{ margin: '0 20px' }}>{`${sucursal.direccion}  -  Horarios de atención: ${sucursal.horarios}`}</h5>
                         <br />
                     </div>
                 )}

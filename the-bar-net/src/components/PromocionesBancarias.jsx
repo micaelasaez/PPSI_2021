@@ -133,14 +133,17 @@ export default function PromocionesBancarias({ update, adminMode = false }) {
                     </h1>
                     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                         {promos.map(promo => (
-                            <Card style={{ width: '25%', height: 'fit-content', margin: "auto", backgroundColor: '#8a2be2' }}
+                            <Card style={{ width: '25%', height: 'fit-content', margin: "auto", backgroundColor: 'rgb(173 113 228)' }}
                                 key={promo.nombre + promo.descuento}>
                                 {/* <Card.Img variant="top" src={p.fotos} style={{ width: '5rem', height: '5rem', margin: "auto" }} /> */}
                                 <Card.Body>
-                                    <Card.Title>PROMOCIÓN BANCO {promo.nombre.toUpperCase()}</Card.Title>
+                                    <Card.Title className="tittle-style" style={{ textShadow: '1px 2px #740ecd' }}>
+                                        PROMOCIÓN BANCO {promo.nombre.toUpperCase()}
+                                    </Card.Title>
                                     <br />
-                                    <p>{promo.descuento} de descuento en todas tus compras!</p>
-                                    <p>Promoción válida hasta el {formatFecha(promo.fechaFin)}</p>
+                                    <p><b>{promo.descuento} de descuento</b> en todas tus compras 
+                                    con tarjetas de {promo.tipoTarjeta === 'credito' ? 'crédito' : 'débito'}!</p>
+                                    <p>Promoción válida hasta el <b>{formatFecha(promo.fechaFin)}</b></p>
                                 </Card.Body>
                                 {adminMode && <Card.Footer>
                                     <Button onClick={() => handleDelete(promo)} variant='danger' size='sm'

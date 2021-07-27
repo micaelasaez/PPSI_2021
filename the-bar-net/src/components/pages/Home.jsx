@@ -67,9 +67,9 @@ export default function Home() {
                         </h1>
                         <Categories />
                     </div>
-                    <div style={{ marginTop: "20px" }}>
+                    {/* <div style={{ marginTop: "20px" }}>
                         <Footer />
-                    </div>
+                    </div> */}
                 </div>
             }
         </div>

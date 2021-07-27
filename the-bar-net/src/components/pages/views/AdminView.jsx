@@ -30,7 +30,11 @@ export default function AdminView() {
             <Tabs justify defaultActiveKey={active} style={{ backgroundColor: 'white' }} onSelect={(p) => setActiveKey(p)}>
                 <Tab eventKey="categorias" title="CATEGORIAS">
                     {activeKey === 'categorias' && <>
-                        <AddCatergory updateCategorias={() => { setDisableSelect(false); setDisableSelect(true); }} />
+                        <AddCatergory updateCategorias={() => {
+                                setDisableSelect(false);
+                                setDisableSelect(true);
+                            }}
+                        />
                         <h4>CATEGORÍAS DISPONIBLES</h4>
                         <Categories disableSelect={disableSelect} />
                     </>}

@@ -6,14 +6,14 @@ import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { TheBarNetServerUrl } from '../context/Url';
 
-const categories = [
-    { name: 'cervezas', title: 'Cervezas' },
-    { name: 'vinos', title: 'Vinos' },
-    { name: 'espumantes', title: 'Espumantes' },
-    { name: 'vodka', title: 'Vodkas' },
-    { name: 'whiskys', title: 'Whiskys' },
-    { name: 'sin-alcohol', title: 'Sin Alcohol' }
-];
+// const categories = [
+//     { name: 'cervezas', title: 'Cervezas' },
+//     { name: 'vinos', title: 'Vinos' },
+//     { name: 'espumantes', title: 'Espumantes' },
+//     { name: 'vodka', title: 'Vodkas' },
+//     { name: 'whiskys', title: 'Whiskys' },
+//     { name: 'sin-alcohol', title: 'Sin Alcohol' }
+// ];
 const quantityTypes = [
     { key: "ml", type: "ml" },
     { key: "l", type: "l" },
@@ -24,10 +24,11 @@ const quantityTypes = [
 
 export default function AddProduct() {
     const todayDate = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
+    const [categorias, setCategorias] = useState([]);
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [quantity, setQuantity] = useState(0);
-    const [quantityType, setQuantityType] = useState("");
+    const [quantityType, setQuantityType] = useState(quantityTypes[0].key);
     const [price, setPrice] = useState(0);
     const [stock, setStock] = useState(0);
     const [minStock, setMinStock] = useState(0);
@@ -75,6 +76,18 @@ export default function AddProduct() {
                     .then(response => {
                         console.log('response 2', response);
                         setAlertMsg('Producto creado correctamente!');
+                        
+                        setName("");
+                        setCategory(categorias[0].id);
+                        setQuantity(0);
+                        setQuantityType(quantityTypes[0].key);
+                        setPrice(0);
+                        setStock(0);
+                        setMinStock(0);
+                        setMaxStock(0);
+                        setFechaVencimiento(todayDate);
+                        setPhoto(null);
+
                         setShowAlert(true);
                     });
             })
@@ -82,7 +95,7 @@ export default function AddProduct() {
                 setAlertMsg('Algo falló con la creación del producto!');
                 setShowAlert(true);
             });
-    }, [name, category, price, quantity, quantityType, stock, minStock, maxStock, fechaVencimiento, photo]);
+    }, [name, category, price, quantity, quantityType, stock, minStock, maxStock, fechaVencimiento, photo, categorias, todayDate]);
 
     const handleChange = useCallback((value) => {
         if (value.target.id === "photo") {
@@ -94,7 +107,7 @@ export default function AddProduct() {
                 setName(value.target.value);
                 break;
             case "category":
-                setCategory((categories.find(c => c.title === value.target.value)).name);
+                setCategory(value.target.value);
                 break;
             case "quantity":
                 setQuantity(value.target.value);
@@ -152,6 +165,26 @@ export default function AddProduct() {
         }
     }, [setSubmitDisabled, nameValid, quantityValid, priceValid, stockValid, minStockValid, maxStockValid, photoValid, category, quantityType, fechaValid])
 
+    useEffect(() => {
+        fetch(TheBarNetServerUrl.categorias, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        }).then(res => res.json())
+            .then(response => {
+                console.log('categorias', response.rta);
+                setCategorias(response.rta);
+                setCategory(response.rta[0].id);
+                /*  CATEGORIA
+                    foto: "http://localhost:4200/uploads/vinos.jpg"
+                    id: 1
+                    nombre: "Vinos y espumantes"
+                */
+            });
+    }, []);
+
     return (
         <>
             <div style={{ height: "100%", width: "60%", margin: "auto" }}>
@@ -180,9 +213,8 @@ export default function AddProduct() {
                                             )}
                                             {item.id === "category"
                                                 ? <Form.Control as="select" onChange={handleChange} id={item.id}>
-                                                    <option key='default'></option>
-                                                    {categories.map(c => (
-                                                        <option key={c.name}>{c.title}</option>
+                                                    {categorias.length > 0 && categorias.map(c => (
+                                                        <option key={c.id} value={c.id}>{c.nombre}</option>
                                                     ))}
                                                 </Form.Control>
                                                 : item.id === "fechaVencimiento"
@@ -196,9 +228,8 @@ export default function AddProduct() {
                                             }
                                             {item.id === "quantity" && (
                                                 <Form.Control as="select" onChange={handleChange} id="quantity-type">
-                                                    <option key='default'></option>
                                                     {quantityTypes.map(t => (
-                                                        <option key={t.key}>{t.type}</option>
+                                                        <option key={t.key} value={t.key}>{t.type}</option>
                                                     ))}
                                                 </Form.Control>
                                             )}

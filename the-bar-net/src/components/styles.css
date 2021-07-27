@@ -70,6 +70,17 @@
     background-color: #6c757d !important;
     border-color: #080808 !important;
 }
+.cat-container {
+    width: 270px !important;
+    height: 270px !important;
+}
+.cat-container:hover {
+    width: 260px !important;
+    height: 260px !important;
+    margin-left: 5px;
+    margin-top: 5px;
+    filter: brightness(80%) contrast(95%);
+}
 .tittle-style {
     color: black;
     text-shadow: 2px 2px #740ecd;

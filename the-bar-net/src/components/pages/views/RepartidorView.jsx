@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import '../../styles.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Button from 'react-bootstrap/Button';
-import UsuariosList from '../UsuariosList';
 import ShowUsuarios from '../../ShowUsuarios';
 import AddEnvio from '../../Forms/AddEnvio';
 import ShowEnvios from '../ShowEnvios';
+import ShowEntregados from '../ShowEntregados';
 
 export default function RepartidorView() {
     const active = "pedidos";
@@ -29,11 +28,15 @@ export default function RepartidorView() {
                         <ShowEnvios />
                     </>}
                 </Tab>
-                <Tab eventKey="remito" title="REMITOS">
-                    <h3>REMITOS</h3>
+                <Tab eventKey="remito" title="CONSTANCIAS DE ENTREGA">
+                    {(activeKey === "remito") && <>
+                        <ShowEntregados />
+                    </>}
                 </Tab>
                 <Tab eventKey="users" title="LISTA DE CLIENTES">
-                    <ShowUsuarios type="cliente" />
+                    {(activeKey === "users") && <>
+                        <ShowUsuarios type="cliente" />
+                    </>}
                 </Tab>
             </Tabs>
         </div>

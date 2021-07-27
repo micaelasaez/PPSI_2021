@@ -18,6 +18,7 @@ export default function AddPromoBanco({ updateRender, update }) {
         nombre: "Santander Río"
     */
     const [bancoSeleccionado, setBancoSeleccionado] = useState(0);
+    const [tipoTarjeta, setTipoTarjeta] = useState('credito');
     const [descuento, setDescuento] = useState(descuentos[0]);
     const [fechaInicio, setFechaInicio] = useState(todayDate);
     const [fechaFin, setFechaFin] = useState("");
@@ -28,6 +29,7 @@ export default function AddPromoBanco({ updateRender, update }) {
     const handleSubmit = useCallback(() => {
         const promo = {
             idBanco: bancoSeleccionado,
+            tipoTarjeta: tipoTarjeta,
             descuento: descuento,
             fechaInicio: fechaInicio,
             fechaFin: fechaFin
@@ -47,6 +49,7 @@ export default function AddPromoBanco({ updateRender, update }) {
                 setAlertMsg('Promoción bancaria creada correctamente!');
                 setShowAlert(true);
                 setFechaFin('');
+                // setTipoTarjeta('credito');
                 setDescuento(descuentos[0]);
             })
             .catch(() => {
@@ -54,7 +57,7 @@ export default function AddPromoBanco({ updateRender, update }) {
                 setShowAlert(true);
             })
             .finally(() => updateRender());
-    }, [bancoSeleccionado, descuento, fechaFin, fechaInicio, updateRender]);
+    }, [bancoSeleccionado, tipoTarjeta, descuento, fechaFin, fechaInicio, updateRender]);
 
     const handleChange = useCallback((value) => {
         // if (value.target.id === "photo") {
@@ -65,6 +68,9 @@ export default function AddPromoBanco({ updateRender, update }) {
             case "banco":
                 const idBanco = (bancos.find(b => b.nombre === value.target.value)).id;
                 setBancoSeleccionado(idBanco);
+                break;
+            case "tipo":
+                setTipoTarjeta(value.target.value);
                 break;
             case "date-inicio":
                 setFechaInicio(value.target.value);
@@ -118,6 +124,15 @@ export default function AddPromoBanco({ updateRender, update }) {
                                     {bancos.map(banco => (
                                         <option key={banco.id}>{banco.nombre}</option>
                                     ))}
+                                </Form.Control>
+                            </div>
+                        </Form.Group>
+                        <Form.Group>
+                            <div style={{ display: 'flex' }}>
+                                <Form.Label style={{ width: '70%' }}>Seleccione tipo de tarjeta</Form.Label>
+                                <Form.Control as="select" onChange={handleChange} id='tipo' style={{ width: '195px' }}>
+                                    <option key={'credito'} value={'credito'} selected>Crédito</option>
+                                    <option key={'debito'} value={'debito'}>Débito</option>
                                 </Form.Control>
                             </div>
                         </Form.Group>

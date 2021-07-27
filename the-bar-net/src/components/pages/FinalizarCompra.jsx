@@ -9,6 +9,7 @@ import SignUp from '../Forms/SignUp';
 import { TarjetasInput } from '../TarjetasInput';
 import { TheBarNetServerUrl } from '../context/Url';
 import { useHistory } from 'react-router-dom';
+import Sucursal from '../Sucursal';
 
 export const modalidadPago = [
     { id: 'efectivo', name: 'Efectivo' },
@@ -18,6 +19,16 @@ export const modalidadPago = [
 export const modalidadEnvio = [
     { id: 'retiro', name: 'Retiro por Sucursal' },
     { id: 'envio', name: 'Envío a Domicilio' }
+];
+
+const descuentos = [
+    { string: '5%', number: 0.05 },
+    { string: '10%', number: 0.1 },
+    { string: '15%', number: 0.15 },
+    { string: '20%', number: 0.2 },
+    { string: '25%', number: 0.25 },
+    { string: '30%', number: 0.3 },
+    { string: '35%', number: 0.35 }
 ];
 
 export default function FinalizarCompra() {
@@ -32,6 +43,8 @@ export default function FinalizarCompra() {
     const [showPedidoRegistrado, setShowPedidoRegistrado] = useState(false);
     const history = useHistory();
     const [preciosEnvio, setPreciosEnvio] = useState([]);
+    const [descuentoBancario, setDescuentoBancario] = useState(0);
+    const [totalReal, setTotalReal] = useState(0);
 
     const handleFinalizarCompra = useCallback((userFinalizarCompra, cargoPorEnvio) => {
         setShowModal(false);
@@ -42,22 +55,34 @@ export default function FinalizarCompra() {
         fechaActual = date + ' ' + time;
 
         const idsProducto = [];
+
         productosCarrito.forEach(pc => {
             for (let index = 0; index < pc.cantidad; index++) {
-                idsProducto.push((pc.p.id).toString());
+                if (pc.p.idCombo !== undefined) {
+                    pc.p.productos.forEach(pcProds => {
+                        for (let index = 0; index < pcProds.cantidad; index++) {
+                            idsProducto.push((pcProds.idProducto).toString());
+                        }
+                    });
+                } else {
+                    idsProducto.push((pc.p.id).toString());
+                }
             }
         });
+
+        console.log(productosCarrito)
+
         const pedido = {
             idUsuario: user.id,
             fecha: fechaActual,
-            total: carritoTotal,
+            total: totalReal,
             tipoEnvio: modalidadEnvioSeleccionada,
             modalidadPago: modalidadPagoSeleccionada,
             estado: modalidadPagoSeleccionada === 'efectivo' ? 'sin_pagar' : 'pagado'
         }
-        if (modalidadEnvioSeleccionada === 'envio') {
-            pedido.total += preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio;
-        }
+        // if (modalidadEnvioSeleccionada === 'envio') {
+        //     pedido.total += preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio;
+        // }
         console.log(pedido)
 
         fetch(TheBarNetServerUrl.pedido, {
@@ -87,14 +112,10 @@ export default function FinalizarCompra() {
                         setCarritoTotal(0);
                     })
             })
-            .catch((e) => console.log(e));
-
-        // alert(JSON.stringify(pedido))
-        // setActualUser(user);
-        // setCompleteUserData(true);
-        // console.log('end', user)
-
-    }, [actualUser.localidad, carritoTotal, modalidadEnvioSeleccionada, modalidadPagoSeleccionada, preciosEnvio, productosCarrito, setCarrito, setCarritoTotal, setPedido, user.id]);
+            .catch((e) =>
+                console.log(e)
+            );
+    }, [modalidadEnvioSeleccionada, modalidadPagoSeleccionada, productosCarrito, setCarrito, setCarritoTotal, setPedido, totalReal, user.id]);
 
     const handleSaveuserData = useCallback((user) => {
         setActualUser(user)
@@ -161,15 +182,24 @@ export default function FinalizarCompra() {
                     Modalidad de pago elegida: {' ' + (modalidadPago.find(mp => mp.id === modalidadPagoSeleccionada)).name}
                 </Card.Text>
                 {/* </>} */}
-                    <hr />
-                    <Card.Text>
-                        Modalidad de envío elegida: {' ' + (modalidadEnvio.find(mE => mE.id === modalidadEnvioSeleccionada)).name}
-                    </Card.Text>
+                <hr />
+                <Card.Text>
+                    Modalidad de envío elegida: {' ' + (modalidadEnvio.find(mE => mE.id === modalidadEnvioSeleccionada)).name}
+                </Card.Text>
                 {modalidadEnvioSeleccionada === 'envio' && <>
                     <Card.Text>
-                        Cargo por envío: {' $' + preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio}
+                        <b>Cargo por envío:</b> {' $' + preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio}
                     </Card.Text>
                 </>}
+                {descuentoBancario !== 0 && <>
+                    <Card.Text>
+                        Descuento por promo bancaria: {descuentoBancario}
+                    </Card.Text>
+                </>}
+                <hr />
+                <Card.Text>
+                    <b>Total:</b> ${' ' + totalReal}
+                </Card.Text>
             </Card.Body>
         </Card>
     )
@@ -181,6 +211,32 @@ export default function FinalizarCompra() {
     //     }
     // }, [actualUser, preciosEnvio]);
 
+    useEffect(() => {
+        const tot = Number.parseInt(carritoTotal) + (
+            modalidadEnvioSeleccionada === 'envio'
+                ? Number.parseInt(preciosEnvio.find(pEnvio => pEnvio.id === Number.parseInt(actualUser.localidad))?.precio)
+                : 0
+        ) - (
+                descuentoBancario !== 0
+                    ? Number.parseInt(carritoTotal * (
+                        descuentos.find(d => {
+                            return d.string === descuentoBancario
+                        })?.number
+                        || 0
+                    ))
+                    : 0
+            );
+        setTotalReal(tot);
+    }, [actualUser.localidad, carritoTotal, descuentoBancario, modalidadEnvioSeleccionada, preciosEnvio])
+
+    const handleValidData = useCallback((descuento) => {
+        if (descuento !== '') {
+            setDescuentoBancario(descuento);
+        } else {
+            setDescuentoBancario(0);
+        }
+        setCardCompleted(true);
+    }, []);
 
     return (
         <div>
@@ -198,12 +254,19 @@ export default function FinalizarCompra() {
                                         id={mPago.id}
                                         label={mPago.name}
                                         checked={mPago.id === modalidadPagoSeleccionada}
-                                        onChange={value => setModalidadPagoSeleccionada(value.target.id)}
+                                        onChange={value => {
+                                            setModalidadPagoSeleccionada(value.target.id);
+                                            setDescuentoBancario(0);
+                                        }}
                                     />
                                 </div>
                             )}
                         </div>
-                        {modalidadPagoSeleccionada !== 'efectivo' && <TarjetasInput handleValidData={() => setCardCompleted(true)} />}
+                        {modalidadPagoSeleccionada !== 'efectivo' &&
+                            <TarjetasInput
+                                handleValidData={handleValidData}
+                                modalidadPagoSeleccionada={modalidadPagoSeleccionada}
+                            />}
                     </div>
                     <div>
                         <br /><h3>Modalidad de Envío</h3><br />
@@ -218,7 +281,13 @@ export default function FinalizarCompra() {
                                 />
                             </div>
                         )}
-                        <br /><br />
+                        <br />
+                        {modalidadEnvioSeleccionada === 'retiro'
+                            && <div style={{ width: '70%' }}>
+                                <Sucursal />
+                            </div>
+                        }
+                        <br />
                         <h3>Datos de {modalidadEnvioSeleccionada === 'retiro' ? 'Facturación' : 'Envío'}</h3>
                         {actualUser.nombre && (
                             <SignUp adminMode finalizarCompra

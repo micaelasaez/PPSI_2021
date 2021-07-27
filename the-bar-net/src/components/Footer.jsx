@@ -40,5 +40,10 @@ export const Footer = () => (
         <Navbar className={"footer-style"} style={{ marginTop: '0px' }}>
             <Sucursal style={{ width: '100%' }} />
         </Navbar>
+        <Navbar className={"footer-style"} style={{ marginTop: '0px' }}>
+            <a href="mailto:encargado@gmail.com" style={{ marginLeft: '625px'}}>
+                COMUNICATE CON NOSOTROS
+            </a> 
+        </Navbar>
     </div>
 )

@@ -115,7 +115,7 @@ export const Ofertas = () => {
     return (
         <div style={{ height: '100%' }}>
             <h1 className="tittle-style" style={{ marginTop: "50px" }}>OFERTAS</h1>
-            <h5>A continuación se muestran los detalles de las ofertas disponibles actualmente. La fecha de fin de oferta es editable.</h5>
+            {adminMode && <h5>A continuación se muestran los detalles de las ofertas disponibles actualmente. La fecha de fin de oferta es editable.</h5>}
             {ofertas.length > 0
                 ? <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', alignItems: 'stretch' }}>
                     {ofertas.map(o => (
