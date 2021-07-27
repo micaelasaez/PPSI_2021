@@ -35,7 +35,9 @@ export default function RepartidorView() {
                 </Tab>
                 <Tab eventKey="users" title="LISTA DE CLIENTES">
                     {(activeKey === "users") && <>
-                        <ShowUsuarios type="cliente" />
+                        <br />
+                        <h4>Seleccione algún cliente para ver su historial de pedidos realizados.</h4>
+                        <ShowUsuarios type="cliente" cantEdit/>
                     </>}
                 </Tab>
             </Tabs>

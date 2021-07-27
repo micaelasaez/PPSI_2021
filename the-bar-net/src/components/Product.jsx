@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { TheBarNetServerUrl } from './context/Url';
 
 // adminMode is for oferta
 // adminProdMode us for producto
@@ -50,7 +51,49 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                 break;
         }
     }, [handleUpdateOferta]);
-
+    
+    const handleEditProd = (prod) => {
+        // if (handleDeleteProd) {
+        //     handleDeleteProd(prod)
+        // }
+        console.log('edit', prod);
+        const product = {
+            nombre: prod.nombre,
+            categoria: prod.categoria,
+            precio: nuevoPrecio,
+            cantidad: prod.cantidad,
+            fechaVencimiento: prod.fechaVencimiento,
+            fotos: prod.fotos,
+            stockMin: prod.stockMin,
+            stockMax: prod.stockMax,
+            stockActual: prod.stockActual
+        };
+        console.log(product)
+        fetch(TheBarNetServerUrl.products + `/${prod.id}`, {
+            mode: 'cors',
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(product)
+        }).then(res => res.json())
+            .then(response => {
+                window.location.reload();
+            });
+    }
+    const handleDeleteProdProd = (prod) => {
+        if (handleDeleteProd) {
+            handleDeleteProd(prod)
+        }
+        console.log('delete', prod);
+        fetch(TheBarNetServerUrl.products + `/${prod.id}`, {
+            mode: 'cors',
+            method: 'DELETE'
+        }).then(res => res.json())
+            .then(response => {
+                 window.location.reload();
+            });
+    }
 
     return (
         <Card style={{ width: '20rem', height: 'fit-content', margin: "20px" }}>
@@ -98,7 +141,22 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                             </Button>
                         </div>
                         : adminProdMode ? <div>
-                            <Button variant="danger" onClick={() => handleDeleteProd(p)}>
+                            <Form.Label>Ingrese nuevo precio:</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Prepend><InputGroup.Text>$</InputGroup.Text></InputGroup.Prepend>
+                                <Form.Control
+                                    type="number" id="nuevoPrecio"
+                                    placeholder='Ingrese nuevo Precio'
+                                    onChange={handleChange}
+                                    isValid={nuevoPrecio > 0 && nuevoPrecio < p.precio}
+                                />
+                            </InputGroup>
+                            {nuevoPrecio !== 0 &&
+                                <Button variant="primary" onClick={() => handleEditProd(p)}
+                                    disabled={nuevoPrecio < 0} style={{ margin: '10px' }}>
+                                    EDITAR BEBIDA
+                                </Button>}
+                            <Button variant="danger" onClick={() => handleDeleteProdProd(p)} style={{ margin: '10px' }}>
                                 {/* disabled={!(fechaFinValid && fechaInicioValid && nuevoPrecioValid)}> */}
                                 BORRAR BEBIDA
                             </Button>
@@ -147,7 +205,7 @@ export default function Product({ addCarrito, p, modoOferta, handleSubmitOferta,
                                     <Form.Text id="passwordHelpBlock" muted>
                                         El precio de la oferta no puede ser mayor al precio de la bebida.
                                     </Form.Text>
-                                    {nuevoPrecio > 0 && <p><br/>Descuento total: ${p.precio - nuevoPrecio}</p>}
+                                    {nuevoPrecio > 0 && <p><br />Descuento total: ${p.precio - nuevoPrecio}</p>}
                                 </Form.Group>
                                 <Form.Group controlId="fechaInicio">
                                     <Form.Label className="login-form-tittles">Fecha de Inicio Oferta</Form.Label>

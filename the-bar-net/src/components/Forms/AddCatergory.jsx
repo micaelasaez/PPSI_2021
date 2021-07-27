@@ -59,6 +59,8 @@ export default function AddCatergory({ updateCategorias }) {
                     .then(res => res.json())
                     .then(response => {
                         console.log('response 2', response);
+                        setName("");
+                        setPhoto(null);
                         if (response.rta === "added") {
                             setAlertMsg('Categoría agregada correctamente.');
                             setShowAlert(true);
@@ -67,8 +69,6 @@ export default function AddCatergory({ updateCategorias }) {
                             setAlertMsg('Algo falló agregando la categoría.');
                             setShowAlert(true);
                         }
-                        setName("");
-                        setPhoto(null);
                     })
             })
             .catch(err => console.log(err));

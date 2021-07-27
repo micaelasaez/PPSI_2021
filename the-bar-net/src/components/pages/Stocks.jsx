@@ -35,6 +35,7 @@ export default function Stocks() {
 
     const updateStocks = (p, stockActual, stockMin, stockMax) => {
         console.log(stockActual, stockMin, stockMax)
+        // nombre, categoria, precio, cantidad, fechaVencimiento, fotos, stockMin, stockMax, stockActual];
         const prod = {
             nombre: p.nombre,
             categoria: p.categoria,
@@ -49,11 +50,20 @@ export default function Stocks() {
         fetch(TheBarNetServerUrl.products + `/${p.id}`, {
             mode: 'cors',
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(prod)
         }).then(res => res.json())
             .then(response => {
                 console.log(response);
-                // setProducts(response.rta)
+                fetch(TheBarNetServerUrl.products, {
+                    mode: 'cors'
+                }).then(res => res.json())
+                    .then(response => {
+                        // console.log(response);
+                        setProducts(response.rta)
+                    })
             })
     }
 

@@ -190,7 +190,10 @@ export default function PedidosViewEmpleado({ entregaSucursal = false }) {
                                             }
                                             <br />
                                             <Button variant="success" onClick={() => handleUpdateEstado(p.id, 'entregado')} >
-                                                MARCAR COMO ENTREGADO
+                                                {p.modalidadPago === 'efectivo'
+                                                    ? 'MARCAR COMO ENTREGADO Y COBRADO'
+                                                    : 'MARCAR COMO ENTREGADO'
+                                                }
                                             </Button>
                                         </div>
                                     )

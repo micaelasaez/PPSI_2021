@@ -17,9 +17,9 @@ import { TheBarNetServerUrl } from '../context/Url';
 const quantityTypes = [
     { key: "ml", type: "ml" },
     { key: "l", type: "l" },
-    { key: "six-pack", type: "Six Pack" },
-    { key: "12u", type: "Caja 12 unidades" },
-    { key: "24u", type: "Caja 24 unidades" }
+    { key: "unidades", type: "Unidades" },
+    // { key: "12u", type: "Caja 12 unidades" },
+    // { key: "24u", type: "Caja 24 unidades" }
 ];
 
 export default function AddProduct() {

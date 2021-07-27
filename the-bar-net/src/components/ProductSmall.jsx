@@ -74,8 +74,13 @@ export default function ProductSmall({ addCombo, p, modoStock = false, updateSto
                             <br />
                             {/* <h5>Diferencia de stock entre actual y mínimo disponible: {stockDifference}</h5> */}
                             <br />
+                            {/* {(stockActual > stockMin && stockMin < stockMax && stockActual < stockMax ) && */}
                             {(stockActual !== p.stockActual || stockMin !== p.stockMin || stockMax !== p.stockMax) &&
-                                <Button variant="danger" onClick={() => updateStocks(p, stockActual, stockMin, stockMax)}>ACTUALIZAR STOCK</Button>
+                                <Button variant="danger" 
+                                    disabled={stockActual < stockMin && stockMin > stockMax && stockActual > stockMax }
+                                    onClick={() => updateStocks(p, stockActual, stockMin, stockMax)}>
+                                    ACTUALIZAR STOCK
+                                </Button>
                             }
                         </div>
                         : <>

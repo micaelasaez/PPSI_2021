@@ -176,13 +176,13 @@ export default function ShowEntregados() {
                             <span>{(modalidadPago.find(m => m.id === envio.pedido.modalidadPago))?.name}</span>
                         </div>
                     </div>
-                    <br />
+                   {/*  <br />
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
                         <Button variant='dark' onClick={() => showProductos(envio.idPedido)} size='sm'>
                             VER PRODUCTOS DEL PEDIDO
                         </Button>
-                    </div>
-                    <br />
+                    </div> 
+                    <br />*/}
                     {envio.pedido.modalidadPago === 'efectivo'
                         && <h4>Se cobró al cliente ${envio.precio}</h4>
                     }
